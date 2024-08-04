@@ -1,12 +1,54 @@
 import React from 'react'
 
 const CustomButton = (props) => {
+    let { extra, type, fun, text } = props;
 
     return (
-        <button className={`primary1 btn  ${props.extra} `} type={props.type} onClick={props.fun}>
-            {props.children}
+        <button className={`primary btn w-100  ${extra} `} type={type} onClick={fun}>
+            {text}
+        </button>
+    )
+}
+const CustomButtonOutline = (props) => {
+    let { extra, type, fun, text } = props;
+
+    return (
+        <button className={`primaryOutline btn w-100  ${extra} `} type={type} onClick={fun}>
+            {text}
         </button>
     )
 }
 
-export default CustomButton
+const CustomButtonLink = (props) => {
+    let { extra, type, href, text } = props;
+
+    return (
+        <a className={`primaryLink btn w-100  ${extra} `} type={type} href={href} target='_blank' >
+            {text}
+        </a>
+    )
+}
+
+const CustomButtonBigButton = (props) => {
+    let { extra, type, fun, text } = props;
+
+    return (
+        <button className={`primary BigBtn btn w-100  ${extra} `} type={type} onClick={fun}>
+            {text}
+        </button>
+    )
+}
+
+const CustomButtonBigCircleView = (props) => {
+    let { extra, type, fun, text, icon } = props;
+
+    return (
+        <button className={`primaryCircleView btn  ${extra} `} type={type} onClick={fun}>
+            {text}
+        </button>
+    )
+}
+
+export { CustomButton, CustomButtonOutline, CustomButtonBigButton, CustomButtonLink, CustomButtonBigCircleView };
+
+

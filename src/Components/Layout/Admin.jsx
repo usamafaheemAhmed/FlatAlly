@@ -1,9 +1,11 @@
 import React from 'react'
 
-const Admin = () => {
+const Admin = ({ children }) => {
   return (
     <div>
-      
+      {/* Add your layout components like header, footer, etc. here */}
+      {children}
+
     </div>
   )
 }

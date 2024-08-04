@@ -7,7 +7,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { FaBars } from 'react-icons/fa';
 
-function Nev() {
+function TopNav() {
     let expand = "md";
     return (
         <div>
@@ -62,4 +62,4 @@ function Nev() {
     );
 }
 
-export default Nev;
+export default TopNav;

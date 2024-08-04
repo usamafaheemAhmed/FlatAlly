@@ -1,3 +1,38 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
+
+:root {
+  --textGoldenColor: rgb(181, 142, 83);
+  --textBlackColor: rgb(23, 23, 23);
+  --textWhiteColor: rgb(255, 255, 255);
+
+  --PrimaryColor: rgb(181, 142, 83);
+  --PrimaryColorHover: rgb(145, 114, 66);
+
+  --SecondaryColor: rgb(23, 23, 23);
+  --SecondaryColorHover: rgb(145, 114, 66);
+
+  --CardBackground: rgb(252, 244, 232);
+  --CardBtn: rgb(89, 83, 73);
+
+  --redHeart: rgb(236, 28, 25);
+  --GoldenStar: rgb(255, 199, 3);
+}
+
+h1,
+h2,
+h3,
+h4,
+h4,
+h5,
+h6 {
+  font-family: "Libre Baskerville", serif;
+}
+p,
+label,
+button,option,input {
+  font-family: "Source Sans 3", sans-serif;
+}
+
 .navbar-toggler {
   border: none !important;
 }
@@ -92,4 +127,159 @@
   justify-content: center;
   align-items: start;
   height: 80vh;
+}
+
+.primary {
+  color: var(--textWhiteColor);
+  background-color: var(--PrimaryColor);
+  border-radius: 0%;
+  &&:is(:hover, :focus, :active) {
+    color: var(--textWhiteColor);
+    background-color: var(--PrimaryColorHover);
+  }
+}
+.primaryCircleView {
+  height: 125px;
+  width: 125px;
+  color: var(--textWhiteColor);
+  background-color: var(--PrimaryColor);
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  &&:is(:hover, :focus, :active) {
+    color: var(--textWhiteColor);
+    background-color: var(--PrimaryColorHover);
+  }
+}
+
+.primaryOutline {
+  color: var(--textGoldenColor);
+  background-color: var(--SecondaryColor);
+  border: 0.5px solid var(--PrimaryColor);
+  border-radius: 0%;
+  &&:is(:hover, :focus, :active) {
+    color: var(--textWhiteColor);
+    background-color: var(--PrimaryColorHover);
+  }
+}
+
+.primaryLink {
+  color: var(--textWhiteColor);
+  border: none;
+  &&:is(:hover, :focus, :active) {
+    color: var(--textGoldenColor);
+    text-decoration: underline;
+    border: none;
+  }
+}
+
+.BigBtn {
+  min-height: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.border-dashed {
+  border: 2px dashed rgb(81, 0, 128);
+  border-radius: 5px;
+}
+
+.darkMode {
+  background-color: var(--SecondaryColor);
+}
+
+.customInput {
+  box-shadow: none;
+  color: var(--textGoldenColor);
+  background-color: var(--SecondaryColor);
+  border: 0.5px solid var(--PrimaryColor);
+  border-radius: 0%;
+  &&:is(:hover, :focus, :active) {
+    box-shadow: none;
+    border: 0.5px solid var(--PrimaryColor);
+    color: var(--textGoldenColor);
+    background-color: var(--SecondaryColor);
+  }
+  &&::placeholder {
+    color: var(--PrimaryColorHover);
+  }
+}
+
+/* Custom checkbox styles */
+.custom-checkbox .form-check-input {
+  position: relative;
+  appearance: none;
+  width: 1.25em;
+  height: 1.25em;
+  border: 2px solid var(--PrimaryColor);
+  border-radius: 0.27em;
+  vertical-align: middle;
+  cursor: pointer;
+  /* margin-right: 0.5em; */
+}
+
+/* Unchecked state */
+.custom-checkbox .form-check-input::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--SecondaryColor);
+  border-radius: 0.25em;
+}
+
+/* Checked state */
+.custom-checkbox .form-check-input:checked::before {
+  content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/></svg>"); /* Unicode checkmark character */
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: goldenrod;
+  color: #fff;
+  text-align: center;
+  line-height: 1.25em;
+  font-size: 1em;
+  border-radius: 0.25em;
+}
+
+/* Custom radio styles */
+.custom-radio .form-check-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 1.25em;
+  height: 1.25em;
+  border: 2px solid var(--PrimaryColor);
+  border-radius: 50%;
+  vertical-align: middle;
+  cursor: pointer;
+  margin-right: 0.5em;
+  position: relative;
+}
+
+.custom-radio .form-check-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.custom-radio .form-check-input::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--SecondaryColor);
+}
+
+.custom-radio .form-check-input:checked::before {
+  background-color: goldenrod;
+  box-shadow: inset 0 0 0 0.25em var(--SecondaryColor);
+}
+
+.custom-radio .form-check-input:checked {
+  border-color: goldenrod;
 }

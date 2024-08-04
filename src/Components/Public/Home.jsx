@@ -6,7 +6,6 @@ const Home = () => {
     let { HomeBlock } = content;
     return (
         <div>
-            2233
             <Motive Obj={HomeBlock[0]} owner={"1"} />
         </div>
     )

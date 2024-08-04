@@ -1,5 +1,5 @@
 import React from 'react'
-import CustomButton from '../../assets/Button/CustomButton'
+import { CustomButton } from '../../assets/Button/CustomButton'
 
 const Footer = () => {
     return (

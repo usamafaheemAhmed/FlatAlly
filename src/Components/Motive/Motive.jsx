@@ -1,7 +1,6 @@
 import React from 'react'
 import { Image } from 'react-bootstrap'
-
-import CustomButton from '../../assets/Button/CustomButton';
+import { CustomButton } from '../../assets/Button/CustomButton'
 
 const Motive = (props) => {
 
