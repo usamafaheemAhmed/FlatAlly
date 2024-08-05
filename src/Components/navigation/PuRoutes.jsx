@@ -5,22 +5,15 @@ import { MdHome } from "react-icons/md";
 import Home from "../Public/Home";
 import DynamicComp from "../../assets/DynamicComps/DynamicComp";
 
-const routes = [
+const PuRoutes = [
     {
         name: "Home",
         layout: "/",
-        path: "home",
+        path: "",
         icon: <MdHome />,
         component: <Home />,
-    },
-    {
-        name: "DynamicComp",
-        layout: "/",
-        path: "DynamicComp",
-        icon: <MdHome />,
-        component: <DynamicComp />,
     },
     // Add more routes here as needed
 ];
 
-export default routes;
+export default PuRoutes;

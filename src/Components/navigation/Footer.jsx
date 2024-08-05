@@ -1,43 +1,44 @@
 import React from 'react'
-import { CustomButton } from '../../assets/Button/CustomButton'
+import { CustomButton, CustomButtonOutline } from '../../assets/Button/CustomButton'
+import { CustomDynamicInputs } from '../../assets/inputs/CustomDynamicInputs'
 
 const Footer = () => {
     return (
 
-        <div className="text-blue bg-Mix p-3 rounded border border-blue">
+        <div className="darkMode text-light bg-Mix p-3  FooterBlock">
             <footer className="py-5">
                 <div className="row">
                     <div className="col-6 col-md-2 mb-3">
                         <h5>Section</h5>
 
                         <ul className="nav flex-column">
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">Home</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">Features</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">Pricing</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">FAQs</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">About</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Home</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Features</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Pricing</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">FAQs</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">About</a></li>
                         </ul>
                     </div>
 
                     <div className="col-6 col-md-2 mb-3">
                         <h5>Section</h5>
                         <ul className="nav flex-column">
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">Home</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">Features</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">Pricing</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">FAQs</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">About</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Home</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Features</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Pricing</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">FAQs</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">About</a></li>
                         </ul>
                     </div>
 
                     <div className="col-6 col-md-2 mb-3">
                         <h5>Section</h5>
                         <ul className="nav flex-column">
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">Home</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">Features</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">Pricing</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">FAQs</a></li>
-                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 text-blue">About</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Home</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Features</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Pricing</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">FAQs</a></li>
+                            <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">About</a></li>
                         </ul>
                     </div>
 
@@ -46,10 +47,9 @@ const Footer = () => {
                             <h5>Subscribe to our newsletter</h5>
                             <p>Monthly digest of what's new and exciting from us.</p>
                             <div className="d-flex flex-column flex-sm-row w-100 gap-2">
-                                <label for="newsletter1" className="visually-hidden">Email address</label>
-                                <input id="newsletter1" type="text" className="form-control" placeholder="Email address" />
-                                <button className="btn btn-primary d-none" type="button">Subscribe</button>
-                                <CustomButton extra="btn" type="button">Subscribe</CustomButton>
+                                <CustomDynamicInputs id="newsletter1" name="newsletter1" type="text"
+                                    Placeholder={"Email address"} />
+                                <CustomButtonOutline type={"button"} fun={() => { console.log("login Clicked") }} text="Subscribe" />
                             </div>
                         </form>
                     </div>

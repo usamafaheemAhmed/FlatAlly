@@ -6,7 +6,7 @@ import { CustomDynamicCheck, CustomDynamicInputs, CustomDynamicRadio, CustomDyna
 
 const DynamicComp = () => {
     return (
-        <div className='container-fluid w-100vw vh-100 darkMode text-light'>
+        <div className='container-fluid w-100vw vh-100 darkMode text-light overflow-hidden'>
             <div className='row'>
                 <div className='col-md-12'>
                     <h1 className='text-center'>Dynamic Components</h1>
@@ -42,7 +42,7 @@ const DynamicComp = () => {
                                         id={"active1"}
                                         Placeholder={"active1"} />
                                 </div>
-                                
+
                                 <div className='col-md-3 mt-2'>
 
                                     <h6>Select input</h6>

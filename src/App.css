@@ -9,6 +9,7 @@
   --PrimaryColorHover: rgb(145, 114, 66);
 
   --SecondaryColor: rgb(23, 23, 23);
+  --SecondaryColorV2: rgb(26, 25, 25);
   --SecondaryColorHover: rgb(145, 114, 66);
 
   --CardBackground: rgb(252, 244, 232);
@@ -29,7 +30,9 @@ h6 {
 }
 p,
 label,
-button,option,input {
+button,
+option,
+input {
   font-family: "Source Sans 3", sans-serif;
 }
 
@@ -157,7 +160,7 @@ button,option,input {
 
 .primaryOutline {
   color: var(--textGoldenColor);
-  background-color: var(--SecondaryColor);
+  background-color: inherit;
   border: 0.5px solid var(--PrimaryColor);
   border-radius: 0%;
   &&:is(:hover, :focus, :active) {
@@ -189,20 +192,20 @@ button,option,input {
 }
 
 .darkMode {
-  background-color: var(--SecondaryColor);
+  background-color: var(--SecondaryColorV2);
 }
 
 .customInput {
   box-shadow: none;
   color: var(--textGoldenColor);
-  background-color: var(--SecondaryColor);
+  background-color: inherit;
   border: 0.5px solid var(--PrimaryColor);
   border-radius: 0%;
   &&:is(:hover, :focus, :active) {
     box-shadow: none;
     border: 0.5px solid var(--PrimaryColor);
     color: var(--textGoldenColor);
-    background-color: var(--SecondaryColor);
+    background-color: inherit;
   }
   &&::placeholder {
     color: var(--PrimaryColorHover);
@@ -282,4 +285,35 @@ button,option,input {
 
 .custom-radio .form-check-input:checked {
   border-color: goldenrod;
+}
+
+.bg-body-tertiary {
+  background-color: transparent !important;
+  backdrop-filter: blur(50px);
+  color: var(--textWhiteColor) !important;
+}
+
+.bg-body-tertiary a {
+  color: var(--textWhiteColor) !important;
+  mix-blend-mode: difference;
+}
+
+.FooterBlock a {
+  color: var(--textWhiteColor) !important;
+  &&:hover {
+    color: var(--PrimaryColor) !important;
+    margin: 0px 0px 0px 10px;
+  }
+  transition: all 0.3s ease-in;
+  position: relative;
+}
+.FooterBlock a:hover::after {
+  content: "";
+  top: 8px;
+  right: calc(100% + 5px);
+  position: absolute;
+  border-radius: 50%;
+  width:  8px;
+  height: 8px;
+  background-color: var(--PrimaryColor);
 }

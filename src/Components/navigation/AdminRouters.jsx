@@ -1,13 +1,13 @@
 // src/Components/navigation/PublicRouters.jsx
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import PuRoutes from "./PuRoutes";
+import AdRoutes from "./AdRoutes";
 
 
-function PublicRouters() {
+function AdminRouters() {
     return (
         <Routes>
-            {PuRoutes.map((route, index) => (
+            {AdRoutes.map((route, index) => (
                 <Route
                     key={index}
                     path={`${route.layout}${route.path}`}
@@ -18,4 +18,4 @@ function PublicRouters() {
     );
 }
 
-export default PublicRouters;
+export default AdminRouters;
