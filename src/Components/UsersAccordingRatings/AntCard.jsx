@@ -3,7 +3,7 @@ import React from 'react';
 import { Avatar, Card } from 'antd';
 const { Meta } = Card;
 import HannanPro from "../../assets/images/Hannanp-1.jpg"
-import roamImg1 from "../../assets/images/roamImg1.jpg"
+import roamImg1 from "../../assets/images/RoomImg (4).jpg"
 import { IoSettingsOutline } from 'react-icons/io5';
 import { LuClipboardEdit } from 'react-icons/lu';
 import { BiDotsHorizontal } from 'react-icons/bi';

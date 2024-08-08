@@ -31,7 +31,7 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    <div className="col-6 col-md-2 mb-3">
+                    <div className="col-6 col-md-2 mb-3 d-none d-md-block">
                         <h5>Section</h5>
                         <ul className="nav flex-column">
                             <li className="nav-item mb-2"><a href="#" className="nav-link p-0 ">Home</a></li>
@@ -49,7 +49,7 @@ const Footer = () => {
                             <div className="d-flex flex-column flex-sm-row w-100 gap-2">
                                 <CustomDynamicInputs id="newsletter1" name="newsletter1" type="text"
                                     Placeholder={"Email address"} />
-                                <CustomButtonOutline type={"button"} fun={() => { console.log("login Clicked") }} text="Subscribe" />
+                                <CustomButton type={"button"} fun={() => { console.log("login Clicked") }} text="Subscribe" />
                             </div>
                         </form>
                     </div>

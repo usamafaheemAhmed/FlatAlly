@@ -3,7 +3,7 @@ import AntCard from './AntCard'
 
 const UsersAccordingRatings = () => {
     return (
-        <div className='d-flex justify-content-around align-item-center gap-4'>
+        <div className='d-flex flex-wrap flex-md-nowrap justify-content-around align-item-center gap-4'>
             <AntCard />
             <AntCard />
             <AntCard />

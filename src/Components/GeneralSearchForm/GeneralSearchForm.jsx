@@ -23,9 +23,9 @@ const GeneralSearchForm = () => {
             {({ values, handleChange, setFieldValue, handleBlur }) => {
                 return (
                     <Form className='text-light'>
-                        <div className='d-flex w-100 h-100 flex-row align-items-stretch'>
+                        <div className='d-flex w-100 h-100 flex-column flex-md-row justify-content-center align-items-center align-items-md-stretch'>
                             <h4 className='d-none'>Search Your Desired Location</h4>
-                            <div className='py-5 px-3' style={{ height: "10rem", width: "33.3%" }}>
+                            <div className='py-5 px-3 GeneralInputBlock' >
                                 <label htmlFor='location' className='mb-2'>Search Your Desired Location</label>
                                 <InputGroup>
                                     <InputGroup.Text className='bg-transparent text-light rounded-0'><IoLocationOutline /></InputGroup.Text>
@@ -33,8 +33,8 @@ const GeneralSearchForm = () => {
                                         className="form-control customInputWhite" placeholder="Location" />
                                 </InputGroup>
                             </div>
-                            <div style={{ borderLeft: "1px solid #fff", height: "7rem", marginTop: "25px" }}></div>
-                            <div className='py-5 px-3' style={{ height: "10rem", width: "33.3%" }}>
+                            <div className='GeneralDividers'></div>
+                            <div className='py-5 px-3 GeneralInputBlock'>
                                 <div className='d-flex justify-content-between'>
                                     <label htmlFor='Gender' className='mb-2'>Select Gender</label>
                                     {values.Gender === "Male" ? <BsGenderMale /> : <BsGenderFemale />}
@@ -48,8 +48,8 @@ const GeneralSearchForm = () => {
                                     <option value="female">Female</option>
                                 </Field>
                             </div>
-                            <div style={{ borderLeft: "1px solid #fff", height: "7rem", marginTop: "25px" }}></div>
-                            <div className='py-4 px-3' style={{ height: "10rem", width: "33.3%" }}>
+                            <div className='GeneralDividers'></div>
+                            <div className='py-4 px-3 GeneralInputBlock'>
                                 <CustomButtonBigButton text="Search" type="submit" height="7.2rem" />
                             </div>
                         </div>
