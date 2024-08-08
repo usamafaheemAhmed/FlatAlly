@@ -180,7 +180,6 @@ input {
 }
 
 .BigBtn {
-  min-height: 6rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -210,6 +209,31 @@ input {
   &&::placeholder {
     color: var(--PrimaryColorHover);
   }
+}
+
+.customInputWhite {
+  box-shadow: none;
+  color: var(--textWhiteColor);
+  background-color: inherit;
+  border: 0.5px solid var(--textWhiteColor);
+  border-radius: 0%;
+  &&:is(:hover, :focus, :active) {
+    box-shadow: none;
+    border: 0.5px solid var(--textWhiteColor);
+    color: var(--textWhiteColor);
+    background-color: inherit;
+  }
+  &&::placeholder {
+    color: var(--textWhiteColor);
+  }
+}
+.customInputWhite option {
+  color: var(
+    --textBlackColor
+  ); /* Set this to a color that contrasts with the background */
+  background-color: var(
+    --textWhiteColor
+  ); /* Ensure this provides enough contrast */
 }
 
 /* Custom checkbox styles */
@@ -287,15 +311,21 @@ input {
   border-color: goldenrod;
 }
 
-.bg-body-tertiary {
+.bg-transparent {
   background-color: transparent !important;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(10px);
+}
+
+.bg-body-tertiary {
+  /* background-color: unset !important; */
+  /* backdrop-filter: blur(10px); */
   color: var(--textWhiteColor) !important;
 }
 
 .bg-body-tertiary a {
   color: var(--textWhiteColor) !important;
   mix-blend-mode: difference;
+  font-family: "Libre Baskerville", serif;
 }
 
 .FooterBlock a {
@@ -313,7 +343,63 @@ input {
   right: calc(100% + 5px);
   position: absolute;
   border-radius: 50%;
-  width:  8px;
+  width: 8px;
   height: 8px;
   background-color: var(--PrimaryColor);
+}
+
+.CustomPadding {
+  padding: 0px 15rem;
+}
+
+@media (max-width: 768px) {
+  .CustomPadding {
+    padding: 0px 0px;
+  }
+}
+
+.blurBackdrop {
+  backdrop-filter: blur(50px);
+  backdrop-filter: blur(10px);
+  color: var(--textWhiteColor) !important;
+}
+
+.textGolden {
+  color: var(--PrimaryColor);
+}
+
+.bg-Golden {
+  background-color: rgba(181, 142, 83, 0.272);
+}
+
+.review-card {
+  padding-top: 32px;
+  text-align: center;
+  position: relative;
+  margin: 20px;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.avatar-container {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.review-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  height: 60px;
+  line-height: 1.5;
+  margin-top: 10px;
 }

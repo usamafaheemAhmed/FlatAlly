@@ -31,9 +31,9 @@ const CustomButtonLink = (props) => {
 
 const CustomButtonBigButton = (props) => {
     let { extra, type, fun, text } = props;
-
+    let PropHeight = props.height || '';
     return (
-        <button className={`primary BigBtn btn w-100  ${extra} `} type={type} onClick={fun}>
+        <button className={`primary BigBtn btn w-100  ${extra} `} type={type} onClick={fun} style={{ minHeight: "4rem", height: PropHeight }}>
             {text}
         </button>
     )
@@ -49,6 +49,16 @@ const CustomButtonBigCircleView = (props) => {
     )
 }
 
-export { CustomButton, CustomButtonOutline, CustomButtonBigButton, CustomButtonLink, CustomButtonBigCircleView };
+const CustomButtonBigCircleOutline = (props) => {
+    let { extra, type, fun, text, icon } = props;
+
+    return (
+        <button className={`primaryCircleView btn  ${extra} `} type={type} onClick={fun}>
+            {text}
+        </button>
+    )
+}
+
+export { CustomButton, CustomButtonOutline, CustomButtonBigButton, CustomButtonLink, CustomButtonBigCircleView, CustomButtonBigCircleOutline };
 
 
