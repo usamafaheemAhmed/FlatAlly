@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navbar, Container, Nav, NavDropdown, Offcanvas } from 'react-bootstrap';
-import { FaBars } from 'react-icons/fa';
+import { BiSearchAlt } from 'react-icons/bi';
+import { FaBars, FaSearch } from 'react-icons/fa';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 function TopNav() {
@@ -47,14 +48,17 @@ function TopNav() {
                                 <NavLink to="/" className="nav-link d-none d-md-block">
                                     <Navbar.Brand href="#">FLATALLY</Navbar.Brand>
                                 </NavLink>
-                                <NavDropdown
+                                {/**
+                                    <NavDropdown
                                     title="Areas"
                                     id={`offcanvasNavbarDropdown-expand-${expand}`}
-                                >
+                                    >
                                     <NavDropdown.Item as={NavLink} to="/">Camden Town</NavDropdown.Item>
                                     <NavDropdown.Item as={NavLink} to="/notting-hill">Notting Hill</NavDropdown.Item>
                                     <NavDropdown.Item as={NavLink} to="/peckham">Peckham</NavDropdown.Item>
-                                </NavDropdown>
+                                    </NavDropdown>
+                                    */}
+                                <Nav.Link as={NavLink} to="/Search">Search <BiSearchAlt style={{ marginTop: "-5px" }} /></Nav.Link>
                                 <Nav.Link as={NavLink} to="/contact">Contact</Nav.Link>
                             </Nav>
                         </Offcanvas.Body>

@@ -2,6 +2,7 @@
 
 :root {
   --textGoldenColor: rgb(181, 142, 83);
+  --textGoldenColor1122: #b58e53;
   --textBlackColor: rgb(23, 23, 23);
   --textWhiteColor: rgb(255, 255, 255);
 
@@ -367,9 +368,16 @@ input {
 .textGolden {
   color: var(--PrimaryColor);
 }
+.textGolden {
+  border-color: var(--PrimaryColor);
+}
 
 .bg-Golden {
   background-color: rgba(181, 142, 83, 0.272);
+}
+
+.bg-Golden2 {
+  background-color: rgb(181, 142, 83);
 }
 
 .review-card {

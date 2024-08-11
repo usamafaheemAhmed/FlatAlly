@@ -10,6 +10,9 @@ import UserReviews from '../UserReviews/UserReviews';
 import SwitchCards from '../SwitchCards/SwitchCards';
 
 const Home = () => {
+
+    
+
     let { CardArray } = content;
     return (
         <div className='container-fluid'>
