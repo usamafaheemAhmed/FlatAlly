@@ -5,9 +5,9 @@ import { Field, Form, Formik } from 'formik'
 import { CustomButtonBigButton } from '../../assets/Button/CustomButton'
 import { IoLocationOutline } from 'react-icons/io5'
 import { BsGenderFemale, BsGenderMale } from 'react-icons/bs'
-import { LoggedInUserData } from '../../Atom'
-import { useRecoilValue } from 'recoil'
-import { useNavigate } from 'react-router-dom'
+import { LoggedInUserData, WhatUserWantToSearch } from '../../Atom'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 
 const SearchBook = () => {
@@ -16,10 +16,21 @@ const SearchBook = () => {
     let loggedUser = useRecoilValue(LoggedInUserData);
     let Nav = useNavigate();
 
+    const location = useLocation();
+    const { state } = location;
+    let [whatUserWantToSearch, setWhatUserWantToSearch] = useRecoilState(WhatUserWantToSearch);
+
+
     useEffect(() => {
+        if (Object.keys(state).length > 0) {
+
+            setWhatUserWantToSearch()
+        }
+
         if (loggedUser && Object.keys(loggedUser).length <= 0) {
             // loggedUser is not an empty object
             localStorage.clear();
+
             Nav("/auth/Login")
         }
     }, []); // Add loggedUser as a dependency

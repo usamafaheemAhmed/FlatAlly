@@ -452,3 +452,9 @@ input {
     margin-top: 0;
   }
 }
+
+.ProfileImgSize {
+  height: 80px;
+  width:  80px;
+  /* border: 2px solid red; */
+}

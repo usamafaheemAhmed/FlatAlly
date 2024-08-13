@@ -13,7 +13,7 @@ import * as Yup from 'yup';
 import { Card, ConfigProvider, Spin, Steps } from 'antd';
 
 import sampleImage from "../../assets/Svgs/Connected world-pana.svg";
-import sampleImage2 from "../../assets/Svgs/Conversation-pana.svg";
+import sampleImage2 from "../../assets/Svgs/profile-user-svgrepo-com.svg";
 
 import FarmSVG from "../../assets/Svgs/Remote team-pana.svg"
 import { Form, Image, InputGroup } from 'react-bootstrap';
@@ -44,16 +44,16 @@ const Register = () => {
 
     const formik = useFormik({
         initialValues: {
-            "id": 1,
             "userName": "",
             "password": "",
             "CPassword": "",
             "email": "",
             "phoneNumber": "",
-            "CNIC": "",
             "address": "",
             "accountType": "Owner",
-            "imageUrl": ""
+            "imageUrl": "",
+            "gender": "",
+            "area": "",
         },
 
 
@@ -64,17 +64,16 @@ const Register = () => {
             // console.log(values);
 
             let mydata = {
-                email: values.email,
-                password: values.password,
                 userName: values.userName,
+                password: values.password,
+                email: values.email,
                 phoneNumber: values.phoneNumber,
-                CNIC: values.CNIC,
                 address: values.address,
                 accountType: values.accountType,
-                imageUrl: values.imageUrl
+                imageUrl: values.imageUrl,
+                gender: values.gender,
+                area: values.area,
             }
-
-            console.log(mydata);
 
             setLoggedUser(mydata);
             setProceed(true);
@@ -99,17 +98,22 @@ const Register = () => {
 
             phoneNumber: Yup.string()
                 .trim()
-                .matches(/^03\d{9}$/, 'Enter  11 digit phone Number eg: 03XXXXXXXXX') // Validate phone number format (adjust as needed)
+                .matches(/^\+44\d{2}\d{4}\d{4}$/, 'Enter  13 digit phone Number eg: +44XXXXXXXXXX ') // Validate phone number format (adjust as needed)
                 .required('Phone number is required'),
         })
     })
 
     const formik2 = useFormik({
         initialValues: {
+            // "userName": "",
+            // "password": "",
             "email": "",
-            "CNIC": "",
+            // "phoneNumber": "",
             "address": "",
-            "imageUrl": ""
+            "accountType": "",
+            "imageUrl": "",
+            "gender": "",
+            "area": "",
         },
 
         onSubmit: async (values, action) => {
@@ -120,15 +124,16 @@ const Register = () => {
 
                 let myData = {
                     email: values.email,
-                    CNIC: values.CNIC,
                     address: values.address,
+                    accountType: values.accountType,
                     imageUrl: values.imageUrl,
+                    gender: values.gender,
+                    area: values.area,
 
                     // previous Object
-                    accountType: loggedUser.accountType,
-                    password: loggedUser.password,
-                    phoneNumber: loggedUser.phoneNumber,
-                    userName: loggedUser.userName,
+                    password: loggedUser.userName,
+                    phoneNumber: loggedUser.password,
+                    userName: loggedUser.phoneNumber,
                 }
 
                 console.log(JSON.stringify(myData));
@@ -138,8 +143,8 @@ const Register = () => {
 
                 // Add each key-value pair from myData to the FormData
                 formData.append('email', values.email);
-                formData.append('CNIC', values.CNIC);
                 formData.append('address', values.address);
+                formData.append('accountType', values.accountType);
 
                 // Handle imageUrl separately (assuming it's a file object)
 
@@ -155,14 +160,15 @@ const Register = () => {
                 }
 
                 // Add remaining properties (optional, adjust as needed)
-                formData.append('accountType', loggedUser.accountType);
+                formData.append('gender', loggedUser.gender);
+                formData.append('area', loggedUser.area);
                 formData.append('password', loggedUser.password);
                 formData.append('phoneNumber', loggedUser.phoneNumber);
                 formData.append('userName', loggedUser.userName);
 
 
 
-                axios.post(defaultApi + '/api/userRegistration/add', formData).then((req) => {
+                axios.post(defaultApi + '/api/Register/add', formData).then((req) => {
                     console.log(req.data);
                     // toast.success("User Registered Successfully", {
                     //     position: "top-center",
@@ -217,12 +223,13 @@ const Register = () => {
             email: Yup.string()
                 .email('Invalid email format')
                 .required('Required'),
-            CNIC: Yup.string()
-                .trim()
-                // .matches(/^\d{5}-\d{7}-\d{1}$/, 'Phone number must be numeric') // Validate phone number format (adjust as needed)
-                .matches(/^\d{13}$/, 'Enter 13 digit CNIC number without dashes "-"') // Validate phone number format (adjust as needed)
-                .required('CNIC number is required'),
             address: Yup.string()
+                .required('Required'),
+            accountType: Yup.string()
+                .required('Required'),
+            gender: Yup.string()
+                .required('Required'),
+            area: Yup.string()
                 .required('Required'),
         })
     })
@@ -351,15 +358,6 @@ const Register = () => {
 
     const [current, setCurrent] = useState(1);
 
-    // Customize the theme here if needed
-    const customTheme = {
-        token: {
-            colorPrimary: '#488a99', // Use the primary color from the theme or default to #488a99
-        }
-        // Add more theme customizations if needed
-    };
-
-
     const handleImageChange = (event) => {
         const selectedFile = event.target.files[0];
         // Basic validation (optional)
@@ -380,7 +378,7 @@ const Register = () => {
                     <Card className='shadow' data-aos="flip-left" data-aos-duration="800">
                         {!proceed &&
                             <div className="row align-items-stretch ">
-                                <div className="col-md-6 order-2">
+                                <div className="col-md-6 order-2 d-flex justify-content-center align-items-center">
                                     <Image src={FarmSVG} alt='Farm SVG' fluid className='w-100' />
                                 </div>
                                 <div className="col-md-6 order-1">
@@ -405,7 +403,7 @@ const Register = () => {
                                                 <div className='col-md-10'>
                                                     <label htmlFor='phoneNumber'>Phone</label>
 
-                                                    <input autoComplete='off' className='form-control' type="string" id='phoneNumber' placeholder="03XXXXXXXXX" name="phoneNumber"
+                                                    <input autoComplete='off' className='form-control' type="string" id='phoneNumber' placeholder="+44XXXXXXXXXX" name="phoneNumber"
                                                         onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.phoneNumber} />
                                                     {formik.touched.phoneNumber && formik.errors.phoneNumber ? <div className='text-danger'>{formik.errors.phoneNumber}</div> : null}
                                                 </div>
@@ -467,32 +465,30 @@ const Register = () => {
                                             <h3><b>Your Address</b></h3>
                                         }
                                         {current === 2 &&
-                                            <h3><b>Add Your Poultry Farm</b></h3>
+                                            <h3><b>Add Preferences</b></h3>
                                         }
 
                                     </div>
                                 </div>
-                                <ConfigProvider theme={customTheme}>
-                                    <Steps
-                                        responsive={true}
-                                        current={current}
-                                        // onChange={onChange}
-                                        items={[
-                                            {
-                                                title: 'Step 1',
-                                                description: "Login",
-                                            },
-                                            {
-                                                title: 'Step 2',
-                                                description: "Your Address",
-                                            },
-                                            {
-                                                title: 'Step 3',
-                                                description: "Add Poultry Farm",
-                                            },
-                                        ]}
-                                    />
-                                </ConfigProvider>
+                                <Steps
+                                    responsive={true}
+                                    current={current}
+                                    // onChange={onChange}
+                                    items={[
+                                        {
+                                            title: 'Step 1',
+                                            description: "Login",
+                                        },
+                                        {
+                                            title: 'Step 2',
+                                            description: "Your Address",
+                                        },
+                                        {
+                                            title: 'Step 3',
+                                            description: "Add Preferences",
+                                        },
+                                    ]}
+                                />
                             </div>
 
                             {!load &&
@@ -500,17 +496,17 @@ const Register = () => {
 
                                     {current === 1 &&
                                         <div className='row mt-2 justify-content-center align-items-start RegisterAddressBlock'>
-                                            <div className='col-md-12 mb-3 d-none'>
+                                            <div className='col-md-2  mb-3 '>
                                                 <div className='row justify-content-center'>
-                                                    <div className='col-md-3 px-5 px-md-0'>
-                                                        <label for="imageUrl" className='curserPointer px-5 px-md-0'  >
-                                                            {previewImage ? (
-                                                                <Image fluid src={previewImage} roundedCircle className='w-100 px-5 px-md-4 ' />
-                                                            ) : (
-                                                                <Image fluid src={sampleImage} roundedCircle className='w-100 px-5 px-md-4' /> // Fallback image
-                                                            )}
-                                                        </label>
-                                                        <label for="imageUrl" className="text-center h5 w-100 fw-bold curserPointer">Profile Pic</label>
+                                                    <label for="imageUrl" className='curserPointer text-center px-5 mt-2 px-md-0'  >
+                                                        {previewImage ? (
+                                                            <Image fluid src={previewImage} roundedCircle className='ProfileImgSize' />
+                                                        ) : (
+                                                            <Image fluid src={sampleImage2} roundedCircle className='ProfileImgSize' /> // Fallback image
+                                                        )}
+                                                    </label>
+                                                    <div className='col-md-12 px-5 px-md-0'>
+                                                        <label for="imageUrl" className="text-center h5 w-100 fw-bold curserPointer  mt-3">Profile Pic</label>
                                                         <input
                                                             autoComplete='off'
                                                             className='form-control d-none'
@@ -525,21 +521,42 @@ const Register = () => {
                                                 </div>
                                             </div>
 
-                                            <div className='col-md-6 '>
+
+                                            <div className='col-md-5'>
                                                 <label htmlFor='email'>Email</label>
                                                 <input autoComplete='off' className='form-control' type="string" id='email' placeholder="example@gmail.com" name="email"
                                                     onChange={formik2.handleChange} onBlur={formik2.handleBlur} value={formik2.values.email} />
                                                 {formik2.touched.email && formik2.errors.email ? <div className='text-danger'>{formik2.errors.email}</div> : null}
+                                                <label htmlFor='accountType' className='mt-3'>Seeking or providing accommodation?</label>
+                                                <select autoComplete='off'
+                                                    className='form-select'
+                                                    type="string" id='accountType' name="accountType"
+                                                    onChange={formik2.handleChange} onBlur={formik2.handleBlur} value={formik2.values.accountType} >
+                                                    <option value="seeking">Seeking</option>
+                                                    <option value="providing">Providing</option>
+                                                </select>
+                                                {formik2.touched.accountType && formik2.errors.accountType ? <div className='text-danger'>{formik2.errors.accountType}</div> : null}
+
                                             </div>
 
-                                            <div className='col-md-6 mt-2 mt-md-0'>
-                                                <label htmlFor='CNIC'>CNIC</label>
-                                                <input autoComplete='off' className='form-control' type="string" id='CNIC' placeholder="3520147812311" name="CNIC"
-                                                    onChange={formik2.handleChange} onBlur={formik2.handleBlur} value={formik2.values.CNIC} />
-                                                {formik2.touched.CNIC && formik2.errors.CNIC ? <div className='text-danger'>{formik2.errors.CNIC}</div> : null}
+                                            <div className='col-md-5 mt-2 mt-md-0'>
+                                                <label htmlFor='gender'>Gender</label>
+                                                <select autoComplete='off'
+                                                    className='form-select'
+                                                    type="string" id='gender' name="gender"
+                                                    onChange={formik2.handleChange} onBlur={formik2.handleBlur} value={formik2.values.gender} >
+                                                    <option value={"Male"}>Male</option>
+                                                    <option value={"Female"}>Female</option>
+                                                </select>
+                                                {formik2.touched.gender && formik2.errors.gender ? <div className='text-danger'>{formik2.errors.gender}</div> : null}
+                                                <label htmlFor='area' className='mt-3'>Area</label>
+                                                <input autoComplete='off' className='form-control' type="text" id='area' placeholder="Enter your area name" name="area"
+                                                    onChange={formik2.handleChange} onBlur={formik2.handleBlur} value={formik2.values.area} />
+                                                {formik2.touched.area && formik2.errors.area ? <div className='text-danger'>{formik2.errors.area}</div> : null}
                                             </div>
 
-                                            <div className='col-md-12 mt-2'>
+
+                                            <div className='col-md-12 '>
                                                 <label htmlFor='address'>Address</label>
                                                 <textarea rows="2" cols="3" autoComplete='off' className='form-control' type="string" id='address' placeholder="address" name="address"
                                                     onChange={formik2.handleChange} onBlur={formik2.handleBlur} value={formik2.values.address} />
@@ -639,11 +656,11 @@ const Register = () => {
 
                             {load && <div className='col-md-10 mt-4'>
                                 <div className='row justify-content-center align-items-center' style={{ height: "20rem" }}>
-                                    <ConfigProvider theme={customTheme}>
-                                        <Spin tip="Registering user, please wait..." size="large">
-                                            &nbsp;
-                                        </Spin>
-                                    </ConfigProvider>
+
+                                    <Spin tip="Registering user, please wait..." size="large">
+                                        &nbsp;
+                                    </Spin>
+
                                 </div>
                             </div>}
 

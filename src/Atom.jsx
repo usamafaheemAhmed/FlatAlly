@@ -17,5 +17,12 @@ export const PoultryFarmState = atom({
   default: {},
 });
 
+export const WhatUserWantToSearch = atom({
+  key: "WhatUserWantToSearch",
+  default: {},
+});
+
+
+
 
 
