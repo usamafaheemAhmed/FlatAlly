@@ -16,13 +16,14 @@ import { Card } from 'antd';
 
 import { Image } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultApiUrl, LoggedInUserData } from '../../Atom';
+import { defaultApiUrl, LoggedInUserData, LoggedInUserTokenJwt } from '../../Atom';
 import LoginSVG from './LoginSVG';
 
 const LoginForm = () => {
   var navigate = useNavigate();
   let defaultApi = useRecoilValue(defaultApiUrl);
   let [loggedUser, setLoggedUser] = useRecoilState(LoggedInUserData);
+  let [loggedUserToken, setLoggedUserToken] = useRecoilState(LoggedInUserTokenJwt)
 
   useEffect(() => {
     sessionStorage.clear();
@@ -43,53 +44,27 @@ const LoginForm = () => {
         email: values.email,
         password: values.password,
       }
+      console.log("mydata:", mydata)
 
       axios
-        .post(defaultApi + "/api/userRegistration/login", mydata)
+        .post(defaultApi + "/api/Login", mydata)
         .then((res) => {
 
 
-          if (res.status === 200) {
-            console.log(res.data.user);
+          console.log(res);
+          if (res.status === 201) {
+            console.log(res.data);
 
-            setLoggedUser(res.data.user);
-
-            // toast.success("login successfully", {
-            //   position: "top-center",
-            //   autoClose: 1000,
-            //   hideProgressBar: false,
-            //   closeOnClick: true,
-            //   pauseOnHover: true,
-            //   draggable: true,
-            //   progress: undefined,
-            //   theme: "light",
-            // });
-
+            setLoggedUserToken(res.data);
+            
             action.resetForm();
-
-
-            sessionStorage.setItem('UserData', JSON.stringify(res.data.user))
-
-            sessionStorage.setItem("loggedIn", true);
-            sessionStorage.setItem("UserName", res.data.user.userName);
-            navigate("/")
-
+            navigate("/Search");
           }
         }
         )
         .catch((error) => {
           if (error.response.status === 400) {
             console.log("error log", error.response);
-            // toast.error(error.response.data, {
-            //   position: "top-center",
-            //   autoClose: 1500,
-            //   hideProgressBar: false,
-            //   closeOnClick: true,
-            //   pauseOnHover: false,
-            //   draggable: true,
-            //   progress: undefined,
-            //   theme: "light",
-            // });
           }
         });
     },
@@ -110,10 +85,6 @@ const LoginForm = () => {
             <div className="row align-items-stretch">
               <div className="col-md-6">
                 <Image src={InternetSVG} alt='Loginimg' fluid />
-                {/**
-                  <LoginSVG />
-                  */}
-
               </div>
               <div className="col-md-6">
                 <div className='d-flex w-100 h-100 justify-content-center align-items-center'>

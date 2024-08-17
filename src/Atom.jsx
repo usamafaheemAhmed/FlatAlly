@@ -12,8 +12,13 @@ export const LoggedInUserData = atom({
   default: {},
 });
 
-export const PoultryFarmState = atom({
-  key: "PoultryFarmState",
+export const LoggedInUserTokenJwt = atom({
+  key: "LoggedInUserTokenJwt",
+  default: {},
+});
+
+export const PreferenceState = atom({
+  key: "PreferenceState",
   default: {},
 });
 

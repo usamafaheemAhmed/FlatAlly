@@ -10,6 +10,7 @@ import AdminRouters from "./Components/navigation/AdminRouters.jsx";
 import ScrollToTop from "./assets/ScrollToTop.jsx";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import AuthLayout from "./Components/Layout/AuthLayout.jsx";
 
 function App() {
 
@@ -26,7 +27,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/*" element={<DefaultLayout><PublicRouters /></DefaultLayout>} />
-        <Route path="/auth/*" element={<authLayout><PublicRouters /></authLayout>} />
+        <Route path="/auth/*" element={<AuthLayout><PublicRouters /></AuthLayout>} />
         <Route path="/admin/*" element={<Admin><AdminRouters /></Admin>} />
       </Routes>
     </div>

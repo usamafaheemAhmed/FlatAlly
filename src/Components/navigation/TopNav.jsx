@@ -3,10 +3,13 @@ import { Navbar, Container, Nav, NavDropdown, Offcanvas } from 'react-bootstrap'
 import { BiSearchAlt } from 'react-icons/bi';
 import { FaBars, FaSearch } from 'react-icons/fa';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { LoggedInUserTokenJwt, PreferenceState } from '../../Atom';
 
 function TopNav() {
     let expand = "md";
-
+    let loggedUserToken = useRecoilValue(LoggedInUserTokenJwt)
+    let preferenceObj = useRecoilValue(PreferenceState);
 
     const [navbarBg, setNavbarBg] = useState(false);
     const handleScroll = () => {
@@ -23,6 +26,10 @@ function TopNav() {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
+    let handleLogout = () => {
+
+    }
 
     return (
         <div>
@@ -44,22 +51,30 @@ function TopNav() {
                         <Offcanvas.Body>
                             <Nav className="justify-content-start justify-content-md-between align-items-start align-items-md-center w-100 CustomPadding">
                                 <NavLink to="/" className="nav-link">Home</NavLink>
+                                {loggedUserToken?.accessToken && preferenceObj && (
+                                    <Nav.Link as={NavLink} to="/History">History</Nav.Link>
+                                )}
                                 <NavLink to="/About" className="nav-link">About</NavLink>
                                 <NavLink to="/" className="nav-link d-none d-md-block">
                                     <Navbar.Brand href="#">FLATALLY</Navbar.Brand>
                                 </NavLink>
-                                {/**
-                                    <NavDropdown
-                                    title="Areas"
-                                    id={`offcanvasNavbarDropdown-expand-${expand}`}
-                                    >
-                                    <NavDropdown.Item as={NavLink} to="/">Camden Town</NavDropdown.Item>
-                                    <NavDropdown.Item as={NavLink} to="/notting-hill">Notting Hill</NavDropdown.Item>
-                                    <NavDropdown.Item as={NavLink} to="/peckham">Peckham</NavDropdown.Item>
-                                    </NavDropdown>
-                                    */}
+
                                 <Nav.Link as={NavLink} to="/Search">Search <BiSearchAlt style={{ marginTop: "-5px" }} /></Nav.Link>
                                 <Nav.Link as={NavLink} to="/contact">Contact</Nav.Link>
+
+                                {loggedUserToken?.accessToken && preferenceObj && (
+                                    <NavDropdown
+                                        title="Profile"
+                                        id={`offcanvasNavbarDropdown-expand-${expand}`}
+                                    >
+                                        <NavDropdown.Item as={NavLink} to="/DashBoard/Profile">DashBoard</NavDropdown.Item>
+                                        <NavDropdown.Item as={NavLink} to="/History">Notifications</NavDropdown.Item>
+                                        <NavDropdown.Item as="button"
+                                            onClick={handleLogout}
+                                            className="logout-button">logout</NavDropdown.Item>
+                                    </NavDropdown>
+                                )}
+
                             </Nav>
                         </Offcanvas.Body>
                     </Navbar.Offcanvas>

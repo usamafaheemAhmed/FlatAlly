@@ -318,8 +318,6 @@ input {
 }
 
 .bg-body-tertiary {
-  /* background-color: unset !important; */
-  /* backdrop-filter: blur(10px); */
   color: var(--textWhiteColor) !important;
 }
 
@@ -368,16 +366,21 @@ input {
 .textGolden {
   color: var(--PrimaryColor);
 }
-.textGolden {
-  border-color: var(--PrimaryColor);
+
+.textGoldenHover:hover {
+  color: var(--PrimaryColor) !important;
 }
+
+/* .textGolden {
+  border-color: var(--PrimaryColor);
+} */
 
 .bg-Golden {
   background-color: rgba(181, 142, 83, 0.272);
 }
 
 .bg-Golden2 {
-  background-color: rgb(181, 142, 83);
+  background-color: rgb(181, 142, 83) !important;
 }
 
 .review-card {
@@ -455,6 +458,93 @@ input {
 
 .ProfileImgSize {
   height: 80px;
-  width:  80px;
+  width: 80px;
   /* border: 2px solid red; */
+}
+
+/* Preference Container */
+.preference-container-white {
+  display: flex;
+  border: 1.5px solid var(--textWhiteColor);
+  border-radius: 0px; /* Adjust rounding as needed */
+  overflow: hidden;
+}
+
+/* Box Styling */
+.preference-box-white {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 35px; /* Adjust height as needed */
+  background-color: transparent;
+  color: var(--textWhiteColor);
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px; /* Adjust font size as needed */
+  font-weight: bold;
+  user-select: none; /* Prevent text selection */
+}
+
+/* Selected Box Styling */
+.preference-box-white.selected {
+  background-color: var(--textWhiteColor);
+  color: var(--textGoldenColor);
+}
+
+/* Preference Container */
+.preference-container {
+  display: flex;
+  border: 1.5px solid var(--PrimaryColor);
+  border-radius: 0px; /* Adjust rounding as needed */
+  overflow: hidden;
+}
+
+/* Box Styling */
+.preference-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 35px; /* Adjust height as needed */
+  background-color: transparent;
+  color: var(--PrimaryColor);
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px; /* Adjust font size as needed */
+  font-weight: bold;
+  user-select: none; /* Prevent text selection */
+}
+
+/* Selected Box Styling */
+.preference-box.selected {
+  background-color: var(--PrimaryColor);
+  color: var(--textWhiteColor);
+}
+
+
+.dropdown-menu .dropdown-item:hover{
+background-color: unset;
+color: var(--PrimaryColor) !important;
+}
+
+/* Remove spinner arrows in Chrome, Safari, Edge, and Opera */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Remove spinner arrows in Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.card-title{
+  font-size: 25px;
+}
+
+.error{
+  color: red;
+  font-size: 12px;
 }

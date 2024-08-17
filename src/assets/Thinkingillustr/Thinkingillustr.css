@@ -1,0 +1,110 @@
+svg#freepik_stories-thinking-face:not(.animated) .animable {
+  opacity: 0;
+}
+svg#freepik_stories-thinking-face.animated
+  #freepik--background-simple--inject-47 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) zoomIn;
+  animation-delay: 0s;
+}
+svg#freepik_stories-thinking-face.animated #freepik--Shadow--inject-47 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) zoomIn;
+  animation-delay: 0s;
+}
+svg#freepik_stories-thinking-face.animated #freepik--speech-bubble--inject-47 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) slideUp;
+  animation-delay: 0s;
+}
+svg#freepik_stories-thinking-face.animated #freepik--Symbol--inject-47 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) lightSpeedLeft;
+  animation-delay: 0s;
+}
+svg#freepik_stories-thinking-face.animated #freepik--Plant--inject-47 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) lightSpeedRight;
+  animation-delay: 0s;
+}
+svg#freepik_stories-thinking-face.animated #freepik--Lamp--inject-47 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) zoomOut;
+  animation-delay: 0s;
+}
+svg#freepik_stories-thinking-face.animated #freepik--Character--inject-47 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) slideRight;
+  animation-delay: 0s;
+}
+svg#freepik_stories-thinking-face.animated #freepik--Table--inject-47 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) slideRight;
+  animation-delay: 0s;
+}
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: inherit;
+  }
+}
+@keyframes lightSpeedLeft {
+  from {
+    transform: translate3d(-50%, 0, 0) skewX(20deg);
+    opacity: 0;
+  }
+  60% {
+    transform: skewX(-10deg);
+    opacity: 1;
+  }
+  80% {
+    transform: skewX(2deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes lightSpeedRight {
+  from {
+    transform: translate3d(50%, 0, 0) skewX(-20deg);
+    opacity: 0;
+  }
+  60% {
+    transform: skewX(10deg);
+    opacity: 1;
+  }
+  80% {
+    transform: skewX(-2deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes zoomOut {
+  0% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes slideRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

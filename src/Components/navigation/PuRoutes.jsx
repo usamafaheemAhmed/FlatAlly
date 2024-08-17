@@ -8,6 +8,7 @@ import Contact from "../Public/Contact";
 import SearchBook from "../Public/SearchBook";
 import LoginForm from "../login/LoginForm";
 import Register from "../login/Register";
+import DashBoard from "../Public/DashBoard";
 
 const PuRoutes = [
     {
@@ -37,6 +38,13 @@ const PuRoutes = [
         path: "Search",
         icon: <MdHome />,
         component: <SearchBook />,
+    },
+    {
+        name: "DashBoard",
+        layout: "/",
+        path: "DashBoard/*",
+        icon: <MdHome />,
+        component: <DashBoard />,
     },
     {
         name: "Login",
