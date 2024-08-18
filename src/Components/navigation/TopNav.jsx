@@ -27,8 +27,11 @@ function TopNav() {
         };
     }, []);
 
-    let handleLogout = () => {
+    // let Nav = useNavigate();
 
+    let handleLogout = () => {
+        localStorage.clear();
+        window.location.reload();
     }
 
     return (
@@ -52,7 +55,7 @@ function TopNav() {
                             <Nav className="justify-content-start justify-content-md-between align-items-start align-items-md-center w-100 CustomPadding">
                                 <NavLink to="/" className="nav-link">Home</NavLink>
                                 {loggedUserToken?.accessToken && preferenceObj && (
-                                    <Nav.Link as={NavLink} to="/History">History</Nav.Link>
+                                    <Nav.Link as={NavLink} to="/DashBoard/notification">Notification</Nav.Link>
                                 )}
                                 <NavLink to="/About" className="nav-link">About</NavLink>
                                 <NavLink to="/" className="nav-link d-none d-md-block">

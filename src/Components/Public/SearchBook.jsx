@@ -5,7 +5,7 @@ import { Field, Form, Formik } from 'formik'
 import { CustomButtonBigButton } from '../../assets/Button/CustomButton'
 import { IoLocationOutline } from 'react-icons/io5'
 import { BsGenderFemale, BsGenderMale } from 'react-icons/bs'
-import { LoggedInUserData, LoggedInUserTokenJwt, WhatUserWantToSearch } from '../../Atom'
+import { defaultApiUrl, LoggedInUserData, LoggedInUserTokenJwt, WhatUserWantToSearch } from '../../Atom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { content } from '../../assets/Content/Content'
@@ -13,19 +13,25 @@ import { Badge, Pagination, Spin } from 'antd'
 import Thinkingillustr from '../../assets/Thinkingillustr/Thinkingillustr'
 import * as Yup from 'yup';
 import HatWomen from "../../assets/images/HatWomen.jpg"
+import { FormikSelect } from '../../assets/inputs/CustomDynamicInputs'
+import { GetAxios, openNotificationSuccess, PostAxios } from '../../assets/Alert/Alert'
 
 
 const SearchBook = () => {
 
     let { countriesList, bedList } = content;
+    let { selectOptionCount6, bedList2 } = content
 
     let loggedUserJWT = useRecoilValue(LoggedInUserTokenJwt);
     let Nav = useNavigate();
+
+    let defaultApi = useRecoilValue(defaultApiUrl);
 
     const location = useLocation();
     const { state } = location;
     let [whatUserWantToSearch, setWhatUserWantToSearch] = useRecoilState(WhatUserWantToSearch);
     let [loading, setLoading] = useState(false);
+    let [matchedData, setMatchedData] = useState([]);
     let [foundData, setFoundData] = useState([
         {
 
@@ -35,60 +41,74 @@ const SearchBook = () => {
 
     useEffect(() => {
         if (state && Object.keys(state).length > 0) {
-
-            setWhatUserWantToSearch()
+            setWhatUserWantToSearch();
         }
-
-        if (loggedUserJWT && Object.keys(loggedUserJWT).length <= 0) {
-            // loggedUser is not an empty object
+        const storedToken = localStorage.getItem("LoginToken");
+        if (!storedToken) {
             localStorage.clear();
-
-            Nav("/auth/Login")
+            Nav("/auth/Login");
         }
-    }, []); // Add loggedUser as a dependency
+
+    }, [loggedUserJWT, state]);
 
 
 
-    let initialValues = {}
+    const initialValues = {
+        address: "123 Main St, London",
+        Gender: "Male",
+        washRoom: "2",
+        kitchen: true,
+        bedRoom: "2",
+        No_Rooms: "3",
+        Floor: "2",
+        bedType: "Queen",
+        area: "Stratford",
+        WorkStatus_Preferences: "Working Professional",
+        Noise_Preferences: "Moderate",
+        Alcohol_Preferences: "Occasionally",
+        Age_Preferences: { min: "18", max: "30" },
+        Smoking_Preferences: false,
+        Vegan_NonVegan_Preference: true,
+        Country_Preferences: "Afghanistan",
+        Religion_Preferences: "Islam",
+        GrocerySharing_Preferences: true,
+    };
 
-    let onSubmit = (values) => {
+
+    let onSubmit = async (values) => {
         console.log(JSON.stringify(values))
+
+        setLoading(true);
+
+        let head = "";
+        let Token = localStorage.getItem("LoginToken");
+
+        if (JSON.parse(Token).accessToken) {
+            head = {
+                headers: {
+                    'Authorization': `Bearer ${JSON.parse(Token).accessToken}`,
+                    'Content-Type': 'application/json' // Optional, specify if you are sending JSON data
+                }
+            }
+        }
+
+        let res = await PostAxios(defaultApi + "/api/matchV2/findMatches",values, head);
+        if (res) {
+            console.log(res)
+            setFoundData(res)
+            setLoading(false);
+            notifySuccess("Data Found", "Click on those which are Online", "success")
+        }
+
     }
 
-    let validationSchema = Yup.object().shape({
-        // Gender_Preferences: Yup.string()
-        //     .oneOf(['Male', 'Female', 'Other'], 'Invalid gender preference')
-        //     .default('Other'),
-        // Religion_Preferences: Yup.string()
-        //     .default(''),
-        // // Country_Preferences: Yup.array()
-        // //     .of(Yup.string())
-        // //     .default([]),
-        // Vegan_NonVegan_Preference: Yup.string()
-        //     .oneOf(['Vegan', 'Non-Vegan'], 'Invalid vegan preference')
-        //     .default('Non-Vegan'),
-        // WorkStatus_Preferences: Yup.array()
-        //     .of(Yup.string().oneOf(['Student', 'Employed fullTime', 'Employed PartTime', 'Unemployed', 'Other'], 'Invalid work status'))
-        //     .default(['Other']),
-        // Alcohol_Preferences: Yup.string()
-        //     .oneOf(['No Preference', 'Social Drinker', 'Non-Drinker', 'Occasional'], 'Invalid alcohol preference')
-        //     .default('No Preference'),
-        // Smoking_Preferences: Yup.boolean()
-        //     .default(false),
-        // Noise_Preferences: Yup.string()
-        //     .oneOf(['Quiet', 'Moderate', 'Loud'], 'Invalid noise preference')
-        //     .default('Moderate'),
-        // Age_Preferences: Yup.object().shape({
-        //     min: Yup.number()
-        //         .min(0, 'Minimum age must be at least 0')
-        //         .max(150, 'Minimum age cannot be more than 150')
-        //         .default(18),
-        //     max: Yup.number()
-        //         .min(Yup.ref('min'), 'Maximum age must be greater than or equal to minimum age')
-        //         .max(150, 'Maximum age cannot be more than 150')
-        //         .default(99)
-        // })
-    })
+    // Helper function for showing notifications
+    const notifySuccess = (message, description, type) => {
+        // const type = type;
+        const placement = "topRight";
+        openNotificationSuccess(type, placement, message, description);
+    };
+    let validationSchema = Yup.object().shape({})
 
 
     return (
@@ -113,6 +133,7 @@ const SearchBook = () => {
                     initialValues={initialValues}
                     onSubmit={onSubmit}
                     validationSchema={validationSchema}
+                    enableReinitialize
                 >
                     {({ values, handleChange, setFieldValue, handleBlur }) => {
                         return (
@@ -123,10 +144,10 @@ const SearchBook = () => {
                                     </div>
 
                                     <div className='py-5 px-3 GeneralInputBlock' >
-                                        <label htmlFor='location' className='mb-2 textGolden'>Search Your Desired Location</label>
+                                        <label htmlFor='address' className='mb-2 textGolden'>Search Your Desired Location</label>
                                         <InputGroup>
                                             <InputGroup.Text className='bg-transparent textGolden borderGolden rounded-0'><IoLocationOutline /></InputGroup.Text>
-                                            <Field type="text" id={"location"} name="location"
+                                            <Field type="text" id={"address"} name="address"
                                                 className="form-control customInput" placeholder="Location" />
                                         </InputGroup>
                                     </div>
@@ -153,77 +174,8 @@ const SearchBook = () => {
 
                                             <div className='bg-Golden2 text-light w-100 mb-3 p-3'>
                                                 <div className='row'>
-                                                    <div className='col-md-12'>
-                                                        <label htmlFor="washRoom"> Number of Washroom </label>
-                                                        <Field as="select" type="text" id={"washRoom"} name="washRoom"
-                                                            className="form-select customInputWhite" placeholder="Number of Washroom" >
-                                                            <option value={1}>1</option>
-                                                            <option value={2}>2</option>
-                                                            <option value={3}>3</option>
-                                                            <option value={4}>4</option>
-                                                            <option value={5}>5</option>
-                                                        </Field>
-                                                    </div>
-                                                    <div className='col-md-12'>
-                                                        <label htmlFor="kitchen"> Kitchen </label>
-                                                        <div className="preference-container-white">
-                                                            <div
-                                                                className={`preference-box-white ${values.kitchen === true ? "selected" : ""}`}
-                                                                onClick={() => setFieldValue('kitchen', true)}
-                                                            >
-                                                                Yes
-                                                            </div>
-                                                            <div
-                                                                className={`preference-box-white ${values.kitchen === false ? "selected" : ""}`}
-                                                                onClick={() => setFieldValue('kitchen', false)}
-                                                            >
-                                                                No
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className='col-md-12'>
-                                                        <label htmlFor="bedRoom"> Number of Bedroom </label>
-                                                        <Field as="select" type="text" id={"bedRoom"} name="bedRoom"
-                                                            className="form-select customInputWhite" placeholder="WorkStatus Preferences" >
-                                                            <option value={1}>1</option>
-                                                            <option value={2}>2</option>
-                                                            <option value={3}>3</option>
-                                                            <option value={4}>4</option>
-                                                            <option value={5}>5</option>
-                                                        </Field>
-                                                    </div>
-                                                    <div className='col-md-12'>
-                                                        <label htmlFor="bedType"> Number of Bedtype </label>
-                                                        <Field as="select" type="text" id={"No_Rooms"} name="No_Rooms"
-                                                            className="form-select customInputWhite" placeholder="WorkStatus Preferences" >
-                                                            {bedList.map((elem, index) => {
-                                                                return (<option value={elem} key={index}>{elem}</option>)
-                                                            })}
-                                                        </Field>
-                                                    </div>
-                                                    <div className='col-md-12'>
-                                                        <label htmlFor="Floor"> Number of Floor </label>
-                                                        <Field as="select" type="text" id={"Floor"} name="Floor"
-                                                            className="form-select customInputWhite" placeholder="WorkStatus Preferences" >
-                                                            <option value={1}>1</option>
-                                                            <option value={2}>2</option>
-                                                            <option value={3}>3</option>
-                                                            <option value={4}>4</option>
-                                                            <option value={5}>5</option>
-                                                        </Field>
-                                                    </div>
-                                                    <div className='col-md-12'>
-                                                        <label htmlFor="No_Rooms"> Number of Rooms </label>
-                                                        <Field as="select" type="text" id={"No_Rooms"} name="No_Rooms"
-                                                            className="form-select customInputWhite" placeholder="WorkStatus Preferences" >
-                                                            <option value={1}>1</option>
-                                                            <option value={2}>2</option>
-                                                            <option value={3}>3</option>
-                                                            <option value={4}>4</option>
-                                                            <option value={5}>5</option>
-                                                        </Field>
-                                                    </div>
-                                                    <div className='col-md-12'>
+                                                    <h5 className="mt-3"> Habits Preference</h5>
+                                                    <div className='col-md-12 mt-3'>
                                                         <label htmlFor="area"> Area </label>
                                                         <InputGroup>
                                                             <InputGroup.Text className='bg-transparent borderGolden text-light rounded-0'><IoLocationOutline /></InputGroup.Text>
@@ -337,6 +289,77 @@ const SearchBook = () => {
                                                             <Field className="form-check-input customInput" type="checkbox" id="GrocerySharing_Preferences" name="GrocerySharing_Preferences" />
                                                             <label className="form-check-label mt-1" htmlFor='GrocerySharing_Preferences'>Partner should share grocery</label>
                                                         </div>
+                                                    </div>
+                                                    <h5 className="mt-3">Flat Preference</h5>
+                                                    <div className='col-md-12 mt-3'>
+                                                        <label htmlFor="washRoom"> Number of Washroom </label>
+                                                        <Field as="select" type="text" id={"washRoom"} name="washRoom"
+                                                            className="form-select customInputWhite" placeholder="Number of Washroom" >
+                                                            <option value={1}>1</option>
+                                                            <option value={2}>2</option>
+                                                            <option value={3}>3</option>
+                                                            <option value={4}>4</option>
+                                                            <option value={5}>5</option>
+                                                        </Field>
+                                                    </div>
+                                                    <div className='col-md-12 mt-3'>
+                                                        <label htmlFor="kitchen"> Shared Kitchen </label>
+                                                        <div className="preference-container-white">
+                                                            <div
+                                                                className={`preference-box-white ${values.kitchen === true ? "selected" : ""}`}
+                                                                onClick={() => setFieldValue('kitchen', true)}
+                                                            >
+                                                                Yes
+                                                            </div>
+                                                            <div
+                                                                className={`preference-box-white ${values.kitchen === false ? "selected" : ""}`}
+                                                                onClick={() => setFieldValue('kitchen', false)}
+                                                            >
+                                                                No
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className='col-md-12 mt-3'>
+                                                        <label htmlFor="bedRoom"> Number of Bedroom </label>
+                                                        <Field as="select" type="text" id={"bedRoom"} name="bedRoom"
+                                                            className="form-select customInputWhite" placeholder="WorkStatus Preferences" >
+                                                            <option value={1}>1</option>
+                                                            <option value={2}>2</option>
+                                                            <option value={3}>3</option>
+                                                            <option value={4}>4</option>
+                                                            <option value={5}>5</option>
+                                                        </Field>
+                                                    </div>
+                                                    <div className='col-md-12 mt-3'>
+                                                        <label htmlFor="bedType"> Number of Bedtype </label>
+                                                        <Field as="select" type="text" id={"bedType"} name="bedType"
+                                                            className="form-select customInputWhite" placeholder="WorkStatus Preferences" >
+                                                            {bedList.map((elem, index) => {
+                                                                return (<option value={elem} key={index}>{elem}</option>)
+                                                            })}
+                                                        </Field>
+                                                    </div>
+                                                    <div className='col-md-12 mt-3'>
+                                                        <label htmlFor="Floor"> Number of Floor </label>
+                                                        <Field as="select" type="text" id={"Floor"} name="Floor"
+                                                            className="form-select customInputWhite" placeholder="WorkStatus Preferences" >
+                                                            <option value={1}>1</option>
+                                                            <option value={2}>2</option>
+                                                            <option value={3}>3</option>
+                                                            <option value={4}>4</option>
+                                                            <option value={5}>5</option>
+                                                        </Field>
+                                                    </div>
+                                                    <div className='col-md-12 mt-3'>
+                                                        <label htmlFor="No_Rooms"> Number of Rooms </label>
+                                                        <Field as="select" type="text" id={"No_Rooms"} name="No_Rooms"
+                                                            className="form-select customInputWhite" placeholder="WorkStatus Preferences" >
+                                                            <option value={1}>1</option>
+                                                            <option value={2}>2</option>
+                                                            <option value={3}>3</option>
+                                                            <option value={4}>4</option>
+                                                            <option value={5}>5</option>
+                                                        </Field>
                                                     </div>
                                                 </div>
 

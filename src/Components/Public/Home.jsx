@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { content } from '../../assets/Content/Content'
 import { Image } from 'react-bootstrap';
 
@@ -11,6 +11,7 @@ import SwitchCards from '../SwitchCards/SwitchCards';
 
 const Home = () => {
 
+    
     
 
     let { CardArray } = content;

@@ -10,7 +10,7 @@ import Select from 'react-select';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Card, ConfigProvider, Spin, Steps } from 'antd';
+import { Card, ConfigProvider, Input as AntInput, Spin, Steps } from 'antd';
 
 import sampleImage from "../../assets/Svgs/Connected world-pana.svg";
 import sampleImage2 from "../../assets/Svgs/profile-user-svgrepo-com.svg";
@@ -21,6 +21,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { defaultApiUrl, LoggedInUserData, LoggedInUserTokenJwt, PreferenceState } from '../../Atom';
+import { openNotificationSuccess } from '../../assets/Alert/Alert';
 
 const Register = () => {
     var navigate = useNavigate();
@@ -35,13 +36,58 @@ const Register = () => {
     let [passwordSwitch, setPasswordSwitch] = useState(false)
     let [confirmPasswordSwitch, setConfirmPasswordSwitch] = useState(false)
     let [load, setLoad] = useState(false)
+    let [RandomCode, setRandomCode] = useState("")
+    let [emailVerifyFlag, setEmailVerifyFlag] = useState(false)
     let [userCreatedFlag, setUserCreatedFlag] = useState(true)
-    const [previewImage, setPreviewImage] = useState(null); // State for preview image
+    const [previewImage, setImageSrc] = useState(null); // State for preview image
 
 
     useEffect(() => {
         sessionStorage.clear();
     }, []);
+
+
+
+    function generate() {
+
+        let charUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let charLowercase = "abcdefghijklmnopqrstuvwxyz";
+        let charNumber = "0123456789";
+        let charSpecial = "~!@#$%^&*_+:?";
+
+        let result = "";
+        let characterLength = 5;
+
+        let includeUppercase = true;
+        let includeLowercase = true;
+        let includeNumber = true;
+        let includeSpecial = true;
+
+
+        for (let i = 0; i <= characterLength; i++) {
+            if (includeUppercase) {
+
+                result += charUppercase.charAt(Math.floor(Math.random() * charUppercase.length));
+            }
+
+            if (includeLowercase) {
+                result += charLowercase.charAt(Math.floor(Math.random() * charLowercase.length));
+            }
+
+            if (includeNumber) {
+                result += charNumber.charAt(Math.floor(Math.random() * charNumber.length));
+            }
+
+            if (includeSpecial) {
+                result += charSpecial.charAt(Math.floor(Math.random() * charSpecial.length));
+            }
+        }
+
+
+        return result.slice(0, characterLength);
+
+    }
+
 
     const formik = useFormik({
         initialValues: {
@@ -61,9 +107,6 @@ const Register = () => {
 
         onSubmit: (values, action) => {
 
-
-            // console.log(values);
-
             let mydata = {
                 userName: values.userName,
                 password: values.password,
@@ -75,12 +118,68 @@ const Register = () => {
                 gender: values.gender,
                 area: values.area,
             }
-
             setLoggedUser(mydata);
-            setProceed(true);
-            setCurrent(1);
+
+            // console.log(values);
+            if (current == 0) {
+                setLoad(true);
+
+                let Obj = {
+                    email: values.email,
+                    OTP: generate()
+                }
+
+                console.log(Obj);
+
+                setRandomCode(Obj.OTP);
+
+                setCurrent(current + 1);
+                setLoad(false);
+                axios.post(defaultApi + '/api/OTPMailer/', Obj).then((req) => {
+                    setCurrent(current + 1);
+                    console.log(req.data);
+                    let type = "success";
+                    let placement = "topRight"
+                    let message = "OTP is Send"
+                    let description = "Please! Check you Mail and Enter Correct Mail"
+                    openNotificationSuccess(type, placement, message, description)
+                    setLoad(false);
+                }).catch((error) => {
+                    console.error(error.response);
+                    if (error.response.status === 404) {
+                        if (error.response.data === "User Already Exists") {
+                            console.log("User Already Exists")
+                            let type = "error";
+                            let placement = "topRight"
+                            let message = error.response.data
+                            let description = "Please! Login is you already have an account"
+                            openNotificationSuccess(type, placement, message, description)
+                        }
+                        else {
+                            console.log(error.response.data);
+                        }
+                        setLoad(false);
+                    }
+                })
+
+            }
+            else {
+                if (RandomCode === values.otp) {
+                    setCurrent(current + 1);
+                    setEmailVerifyFlag(true);
+                    setProceed(true);
+                }
+                else {
+                    let type = "error";
+                    let placement = "topRight"
+                    let message = "Invalid Code"
+                    let description = "Please! Check Again"
+                    openNotificationSuccess(type, placement, message, description)
+                }
+            }
 
         },
+
 
         validationSchema: Yup.object({
 
@@ -97,10 +196,10 @@ const Register = () => {
                 .oneOf([Yup.ref('password')], 'Passwords must match') // Ensure confirm password matches password
                 .required('Confirm password is required'),
 
-            phoneNumber: Yup.string()
-                .trim()
-                .matches(/^\+44\d{2}\d{4}\d{4}$/, 'Enter  13 digit phone Number eg: +44XXXXXXXXXX ') // Validate phone number format (adjust as needed)
-                .required('Phone number is required'),
+            email: Yup.string()
+                .email('Invalid email format')
+                .required('Required'),
+
         })
     })
 
@@ -108,8 +207,8 @@ const Register = () => {
         initialValues: {
             // "userName": "",
             // "password": "",
-            "email": "",
-            // "phoneNumber": "",
+            // "email": "",
+            "phoneNumber": "",
             "address": "",
             "accountType": "",
             "imageUrl": "",
@@ -118,7 +217,7 @@ const Register = () => {
         },
 
         onSubmit: async (values, action) => {
-            // alert("Jinga");
+            alert("Jinga");
 
             if (userCreatedFlag) {
                 setLoad(true);
@@ -132,9 +231,9 @@ const Register = () => {
                     area: values.area,
 
                     // previous Object
-                    password: loggedUser.userName,
-                    phoneNumber: loggedUser.password,
-                    userName: loggedUser.phoneNumber,
+                    userName: loggedUser.userName,
+                    password: loggedUser.password,
+                    phoneNumber: loggedUser.phoneNumber,
                 }
 
                 console.log(JSON.stringify(myData));
@@ -143,29 +242,32 @@ const Register = () => {
                 const formData = new FormData();
 
                 // Add each key-value pair from myData to the FormData
-                formData.append('email', values.email);
+                formData.append('phoneNumber', values.phoneNumber);
                 formData.append('address', values.address);
                 formData.append('accountType', values.accountType);
+                formData.append('gender', values.gender);
+                formData.append('area', values.area);
 
                 // Handle imageUrl separately (assuming it's a file object)
 
                 // Get the image file
-                const imageFile = await getImageFile(sampleImage2);
+                const imageFile = values.imageUrl;
 
                 if (imageFile) {
                     // Add the image file to FormData
                     formData.append('imageUrl', imageFile);
                 } else {
+                    alert("please Enter Image");
                     console.error('Image file is null');
-                    return;
+                    setLoad(false);
+
+                    return false;
                 }
 
                 // Add remaining properties (optional, adjust as needed)
-                formData.append('gender', values.gender);
-                formData.append('area', values.area);
-                formData.append('password', loggedUser.password);
-                formData.append('phoneNumber', loggedUser.phoneNumber);
                 formData.append('userName', loggedUser.userName);
+                formData.append('email', loggedUser.email);
+                formData.append('password', loggedUser.password);
 
 
 
@@ -176,13 +278,15 @@ const Register = () => {
                     setUserCreatedFlag(false);
                     setLoggedUserToken(req.data);
 
-                    sessionStorage.setItem('UserToken', JSON.stringify(req.data))
-                    sessionStorage.setItem("loggedIn", true);
-                    sessionStorage.setItem("UserName", loggedUser.userName);
+                    localStorage.setItem("LoginToken", JSON.stringify(res.data))
+
+                    // sessionStorage.setItem('UserToken', JSON.stringify(req.data))
+                    // sessionStorage.setItem("loggedIn", true);
+                    // sessionStorage.setItem("UserName", loggedUser.userName);
 
                 }).catch((error) => {
                     console.error(error.response);
-                    if (error.response.status === 400) {
+                    if (error.response.status === 409) {
                         if (error.response.data === "User already exists.") {
                             console.log("User Already Exists")
                         }
@@ -190,7 +294,6 @@ const Register = () => {
                             console.log(error.response.data);
                         }
                         setLoad(false);
-
                     }
                 })
             }
@@ -202,9 +305,6 @@ const Register = () => {
         },
 
         validationSchema: Yup.object({
-            email: Yup.string()
-                .email('Invalid email format')
-                .required('Required'),
             address: Yup.string()
                 .required('Required'),
             accountType: Yup.string()
@@ -213,27 +313,19 @@ const Register = () => {
                 .required('Required'),
             area: Yup.string()
                 .required('Required'),
+            phoneNumber: Yup.string()
+                .trim()
+                .matches(/^\+44\d{2}\d{4}\d{4}$/, 'Enter 13 digit phone Number eg: +44XXXXXXXXXX ') // Validate phone number format (adjust as needed)
+                .required('Phone number is required'),
         })
     })
-    // Assuming sampleImage2 is the path to the image file
-    const getImageFile = async (imageUrl) => {
-        try {
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            return new File([blob], 'filename.png', { type: 'image/png' }); // Adjust the filename and type as needed
-        } catch (error) {
-            console.error('Error getting image file:', error);
-            return null;
-        }
-    };
-
 
     const formik3 = useFormik({
         initialValues: {
             Gender_Preferences: "Other", //select
             Religion_Preferences: "", //text
             // Country_Preferences: "", //text
-            Vegan_NonVegan_Preference: 'Non-Vegan', //radio
+            Vegan_NonVegan_Preference: true, //radio
             // GrocerySharing_Preferences: "", //bool
             WorkStatus_Preferences: "Other", //select
             Alcohol_Preferences: "No Preference", //Select
@@ -302,9 +394,11 @@ const Register = () => {
             // Country_Preferences: Yup.array()
             //     .of(Yup.string())
             //     .default([]),
-            Vegan_NonVegan_Preference: Yup.string()
-                .oneOf(['Vegan', 'Non-Vegan'], 'Invalid vegan preference')
-                .default('Non-Vegan'),
+            // Vegan_NonVegan_Preference: Yup.string()
+            //     .oneOf(['Vegan', 'Non-Vegan'], 'Invalid vegan preference')
+            //     .default('Non-Vegan'),
+            Vegan_NonVegan_Preference: Yup.boolean()
+                .default(false),
             WorkStatus_Preferences: Yup.array()
                 .of(Yup.string().oneOf(['Student', 'Employed fullTime', 'Employed PartTime', 'Unemployed', 'Other'], 'Invalid work status'))
                 .default(['Other']),
@@ -329,19 +423,36 @@ const Register = () => {
         })
     })
 
-    const [current, setCurrent] = useState(1);
+    const [current, setCurrent] = useState(0);
 
-    const handleImageChange = (event) => {
-        const selectedFile = event.target.files[0];
-        // Basic validation (optional)
-        if (!selectedFile || !selectedFile.type.match('image/*')) {
-            console.error('Invalid image file format. Please select an image');
-            return;
+    const handleImageChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const maxMemorySize = 900 * 1024; // 900 KB in bytes
+
+            const reader = new FileReader();
+
+            reader.onload = async (e) => {
+                try {
+                    // Check image memory size
+                    const imageData = e.target.result.split(',')[1]; // Get data URL content
+                    const imageBytes = atob(imageData).length; // Decode and get byte length
+
+                    if (imageBytes > maxMemorySize) {
+                        alert("Image size exceeds 900 KB. Please choose a smaller image.");
+                        return;
+                    }
+
+                    setImageSrc(e.target.result);
+                } catch (error) {
+                    console.error("Error loading image:", error);
+                }
+            };
+
+            reader.readAsDataURL(file);
         }
-
-        formik2.setFieldValue('imageUrl', selectedFile); // Set the image file object
-        setPreviewImage(URL.createObjectURL(selectedFile)); // Update preview image
     };
+
 
     const options = [
         { value: 'Student', label: 'Student' },
@@ -350,6 +461,16 @@ const Register = () => {
         { value: 'Unemployed', label: 'Unemployed' },
         { value: 'Other', label: 'Other' }
     ];
+
+    let GOBack = () => {
+        if (current === 2) {
+            setCurrent(0);
+            setProceed(false);
+        }
+        else if (current === 3) {
+            setCurrent(current - 1);
+        }
+    }
 
     return (
         <div className='container-fluid'>
@@ -369,65 +490,93 @@ const Register = () => {
                                                     <h3><b>REGISTER</b></h3>
                                                 </div>
                                             </div>
+                                            {current == 0 &&
+                                                <React.Fragment>
+                                                    <div className='row mt-2 justify-content-center'>
+                                                        <div className='col-md-10'>
+                                                            <label htmlFor='userName'>Name</label>
+                                                            <input autoComplete='off' className='form-control' type="string" id='userName' placeholder="Enter your name" name="userName"
+                                                                onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.userName} />
+                                                            {formik.touched.userName && formik.errors.userName ? <div className='text-danger'>{formik.errors.userName}</div> : null}
+                                                        </div>
+                                                    </div>
 
-                                            <div className='row mt-2 justify-content-center'>
-                                                <div className='col-md-10'>
-                                                    <label htmlFor='userName'>Name</label>
-                                                    <input autoComplete='off' className='form-control' type="string" id='userName' placeholder="Enter your name" name="userName"
-                                                        onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.userName} />
-                                                    {formik.touched.userName && formik.errors.userName ? <div className='text-danger'>{formik.errors.userName}</div> : null}
-                                                </div>
-                                            </div>
+                                                    <div className='row mt-2 justify-content-center'>
+                                                        <div className='col-md-10'>
+                                                            <label htmlFor='email'>Email</label>
+                                                            <input autoComplete='off' className='form-control' type="string" id='email' placeholder="example@gmail.com" name="email"
+                                                                onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.email} />
+                                                            {formik.touched.email && formik.errors.email ? <div className='text-danger'>{formik.errors.email}</div> : null}
 
-                                            <div className='row mt-2 justify-content-center'>
-                                                <div className='col-md-10'>
-                                                    <label htmlFor='phoneNumber'>Phone</label>
+                                                        </div>
+                                                    </div>
 
-                                                    <input autoComplete='off' className='form-control' type="string" id='phoneNumber' placeholder="+44XXXXXXXXXX" name="phoneNumber"
-                                                        onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.phoneNumber} />
-                                                    {formik.touched.phoneNumber && formik.errors.phoneNumber ? <div className='text-danger'>{formik.errors.phoneNumber}</div> : null}
-                                                </div>
-                                            </div>
+                                                    <div className='row mt-2'>
+                                                        <div className='col-md-1'></div>
+                                                        <div className='col-md-10'>
+                                                            <label htmlFor='password'>Password</label>
+                                                            <InputGroup>
+                                                                <Form.Control className='form-control box-shadow-0 border-end-0' type={passwordSwitch ? "text" : "password"} id='password' placeholder="Password" name='password'
+                                                                    onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.password} />
+                                                                <InputGroup.Text className='bg-white border-start-0 curserPointer' onClick={() => setPasswordSwitch(!passwordSwitch)} > {passwordSwitch ? <FiEye /> : <FiEyeOff />}</InputGroup.Text>
+                                                            </InputGroup>
 
-                                            <div className='row mt-2'>
-                                                <div className='col-md-1'></div>
-                                                <div className='col-md-10'>
-                                                    <label htmlFor='password'>Password</label>
-                                                    <InputGroup>
-                                                        <Form.Control className='form-control box-shadow-0 border-end-0' type={passwordSwitch ? "text" : "password"} id='password' placeholder="Password" name='password'
-                                                            onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.password} />
-                                                        <InputGroup.Text className='bg-white border-start-0 curserPointer' onClick={() => setPasswordSwitch(!passwordSwitch)} > {passwordSwitch ? <FiEye /> : <FiEyeOff />}</InputGroup.Text>
-                                                    </InputGroup>
+                                                            {formik.touched.password && formik.errors.password ? <div className='text-danger'>{formik.errors.password}</div> : null}
+                                                        </div>
+                                                        <div className='col-md-1'></div>
+                                                    </div>
 
-                                                    {formik.touched.password && formik.errors.password ? <div className='text-danger'>{formik.errors.password}</div> : null}
-                                                </div>
-                                                <div className='col-md-1'></div>
-                                            </div>
+                                                    <div className='row mt-2'>
+                                                        <div className='col-md-1'></div>
+                                                        <div className='col-md-10'>
+                                                            <label htmlFor='CPassword'>Confirm Password</label>
+                                                            <InputGroup>
+                                                                <Form.Control className='form-control box-shadow-0 border-end-0' type={confirmPasswordSwitch ? "text" : "password"} id='CPassword' placeholder="Confirm Password" name='CPassword'
+                                                                    onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.CPassword} />
+                                                                <InputGroup.Text className='bg-white border-start-0 curserPointer' onClick={() => setConfirmPasswordSwitch(!confirmPasswordSwitch)} > {confirmPasswordSwitch ? <FiEye /> : <FiEyeOff />}</InputGroup.Text>
+                                                            </InputGroup>
 
-                                            <div className='row mt-2'>
-                                                <div className='col-md-1'></div>
-                                                <div className='col-md-10'>
-                                                    <label htmlFor='CPassword'>Confirm Password</label>
-                                                    <InputGroup>
-                                                        <Form.Control className='form-control box-shadow-0 border-end-0' type={confirmPasswordSwitch ? "text" : "password"} id='CPassword' placeholder="Confirm Password" name='CPassword'
-                                                            onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.CPassword} />
-                                                        <InputGroup.Text className='bg-white border-start-0 curserPointer' onClick={() => setConfirmPasswordSwitch(!confirmPasswordSwitch)} > {confirmPasswordSwitch ? <FiEye /> : <FiEyeOff />}</InputGroup.Text>
-                                                    </InputGroup>
+                                                            {formik.touched.CPassword && formik.errors.CPassword ? <div className='text-danger'>{formik.errors.CPassword}</div> : null}
+                                                        </div>
+                                                        <div className='col-md-1'></div>
+                                                    </div>
 
-                                                    {formik.touched.CPassword && formik.errors.CPassword ? <div className='text-danger'>{formik.errors.CPassword}</div> : null}
-                                                </div>
-                                                <div className='col-md-1'></div>
-                                            </div>
-
-                                            <div className='row mt-3 mb-2 justify-content-center '>
-                                                <div className='col-md-10'>
-                                                    <p className='p-0 m-0'>I already have an Account <Link to='/auth/login' className='C-color'>Login</Link></p>
-                                                </div>
-                                            </div>
+                                                    <div className='row mt-3 mb-2 justify-content-center '>
+                                                        <div className='col-md-10'>
+                                                            <p className='p-0 m-0'>I already have an Account <Link to='/auth/login' className='C-color'>Login</Link></p>
+                                                        </div>
+                                                    </div>
+                                                </React.Fragment>
+                                            }
+                                            {current == 1 &&
+                                                <React.Fragment>
+                                                    <div className='row mt-2 justify-content-center mb-3'>
+                                                        <div className='col-md-10'>
+                                                            <label htmlFor="otp">Enter OTP</label>
+                                                            <AntInput
+                                                                id="otp"
+                                                                name="otp"
+                                                                type="text"
+                                                                placeholder="Enter the OTP"
+                                                                value={formik.values.otp}
+                                                                onChange={formik.handleChange}
+                                                                onBlur={formik.handleBlur}
+                                                                className={formik.touched.otp && formik.errors.otp ? 'is-invalid' : ''}
+                                                            />
+                                                            {formik.touched.otp && formik.errors.otp ? (
+                                                                <div className="text-danger">{formik.errors.otp}</div>
+                                                            ) : null}
+                                                            <p className='p-0 mt-2'>An OTP is Send on: <br /> {loggedUser.email}</p>
+                                                        </div>
+                                                    </div>
+                                                </React.Fragment>
+                                            }
 
                                             <div className='row justify-content-center '>
                                                 <div className='col-md-10'>
-                                                    <button type='submit' className='primary btn w-100 '>Sign up</button>
+                                                    <button type='submit' className='primary btn w-100 '>
+                                                        {current == 0 ? "Sign Up" : "Check"}
+                                                    </button>
                                                 </div>
                                             </div>
 
@@ -441,10 +590,10 @@ const Register = () => {
                             <div className='col-md-10'>
                                 <div className='row mt-2 mb-md-4'>
                                     <div className='col-md-12 text-center'>
-                                        {current === 1 &&
+                                        {current === 2 &&
                                             <h3><b>Your Address</b></h3>
                                         }
-                                        {current === 2 &&
+                                        {current === 3 &&
                                             <h3><b>Add Preferences</b></h3>
                                         }
 
@@ -453,7 +602,7 @@ const Register = () => {
                                 <div className=' d-none d-md-block'>
                                     <Steps
                                         responsive={true}
-                                        current={current}
+                                        current={current - 1}
                                         // onChange={onChange}
                                         items={[
                                             {
@@ -476,7 +625,7 @@ const Register = () => {
                             {!load &&
                                 <div className='col-md-10 mt-md-4'>
 
-                                    {current === 1 &&
+                                    {current === 2 &&
                                         <div className='row mt-2 justify-content-center align-items-start RegisterAddressBlock'>
                                             <div className='col-md-2  mb-3 '>
                                                 <div className='row justify-content-center'>
@@ -496,7 +645,10 @@ const Register = () => {
                                                             id='imageUrl'
                                                             placeholder="file"
                                                             name="imageUrl"
-                                                            onChange={handleImageChange}
+                                                            onChange={(event) => {
+                                                                formik2.setFieldValue("imageUrl", event.currentTarget.files[0]);
+                                                                handleImageChange(event);
+                                                            }}
                                                             onBlur={formik2.handleBlur} // Optional
                                                         />
                                                     </div>
@@ -505,20 +657,22 @@ const Register = () => {
 
 
                                             <div className='col-md-5'>
-                                                <label htmlFor='email'>Email</label>
-                                                <input autoComplete='off' className='form-control' type="string" id='email' placeholder="example@gmail.com" name="email"
-                                                    onChange={formik2.handleChange} onBlur={formik2.handleBlur} value={formik2.values.email} />
-                                                {formik2.touched.email && formik2.errors.email ? <div className='text-danger'>{formik2.errors.email}</div> : null}
-                                                <label htmlFor='accountType' className='mt-3'>Seeking or providing accommodation?</label>
+
+                                                <label htmlFor='phoneNumber'>Phone</label>
+
+                                                <input autoComplete='off' className='form-control' type="string" id='phoneNumber' placeholder="+44XXXXXXXXXX" name="phoneNumber"
+                                                    onChange={formik2.handleChange} onBlur={formik2.handleBlur} value={formik2.values.phoneNumber} />
+                                                {formik2.touched.phoneNumber && formik2.errors.phoneNumber ? <div className='text-danger'>{formik2.errors.phoneNumber}</div> : null}
+
+                                                <label htmlFor='accountType' className='mt-3'>looking for Room or Roommates?</label>
                                                 <select autoComplete='off'
                                                     className='form-select'
                                                     type="string" id='accountType' name="accountType"
                                                     onChange={formik2.handleChange} onBlur={formik2.handleBlur} value={formik2.values.accountType} >
-                                                    <option value="seeking">Seeking</option>
-                                                    <option value="providing">Providing</option>
+                                                    <option value="seeking">Room</option>
+                                                    <option value="providing">Roommates</option>
                                                 </select>
                                                 {formik2.touched.accountType && formik2.errors.accountType ? <div className='text-danger'>{formik2.errors.accountType}</div> : null}
-
                                             </div>
 
                                             <div className='col-md-5 mt-2 mt-md-0'>
@@ -546,7 +700,7 @@ const Register = () => {
                                             </div>
                                         </div>}
 
-                                    {current === 2 &&
+                                    {current === 3 &&
                                         <div className='row mb-4 justify-content-center'>
                                             <div className='col-md-6 mt-2'>
                                                 <label htmlFor='Gender_Preferences'>Gender Preferences</label>
@@ -574,14 +728,14 @@ const Register = () => {
 
                                                 <div className="preference-container">
                                                     <div
-                                                        className={`preference-box ${formik3.values.Vegan_NonVegan_Preference === "Vegan" ? "selected" : ""}`}
-                                                        onClick={() => formik3.setFieldValue('Vegan_NonVegan_Preference', 'Vegan')}
+                                                        className={`preference-box ${formik3.values.Vegan_NonVegan_Preference === true ? "selected" : ""}`}
+                                                        onClick={() => formik3.setFieldValue('Vegan_NonVegan_Preference', true)}
                                                     >
-                                                        Vegan
+                                                        Vegans
                                                     </div>
                                                     <div
-                                                        className={`preference-box ${formik3.values.Vegan_NonVegan_Preference === "Non-Vegan" ? "selected" : ""}`}
-                                                        onClick={() => formik3.setFieldValue('Vegan_NonVegan_Preference', 'Non-Vegan')}
+                                                        className={`preference-box ${formik3.values.Vegan_NonVegan_Preference === false ? "selected" : ""}`}
+                                                        onClick={() => formik3.setFieldValue('Vegan_NonVegan_Preference', false)}
                                                     >
                                                         Non-Vegan
                                                     </div>
@@ -664,7 +818,7 @@ const Register = () => {
                                             </div>
 
                                             <div className='col-md-6 mt-2'>
-                                                <label htmlFor='Age_Preferences'>Age_Preferences</label>
+                                                <label htmlFor='Age_Preferences'>Age Preferences</label>
 
                                                 <InputGroup>
                                                     <input
@@ -710,14 +864,14 @@ const Register = () => {
 
                                     <div className='row justify-content-between'>
                                         <div className='col-md-2 mt-2'>
-                                            <button type='submit' onClick={() => { setCurrent(current - 1); if (current === 1) { setProceed(false); } }} className='primary btn w-100'>Back</button>
+                                            <button type='submit' onClick={GOBack} className='primary btn w-100'>Back</button>
                                         </div>
 
                                         <div className='col-md-2 mt-2'>
                                             {/**<button type='submit' onClick={() => { if (current === 1) { alert("Befor junga"); formik2.handleSubmit() } else { formik3.handleSubmit() } }} className='primary btnReverse w-100'>Next</button> */}
                                             <button
                                                 type='submit'
-                                                onClick={() => (current === 1 ? formik2.handleSubmit() : formik3.handleSubmit())}
+                                                onClick={() => (current === 2 ? formik2.handleSubmit() : formik3.handleSubmit())}
                                                 className='primary btn w-100'
                                             >
                                                 Next

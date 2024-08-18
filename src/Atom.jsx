@@ -22,9 +22,19 @@ export const PreferenceState = atom({
   default: {},
 });
 
+export const FlatState = atom({
+  key: "FlatState",
+  default: {},
+});
+
 export const WhatUserWantToSearch = atom({
   key: "WhatUserWantToSearch",
   default: {},
+});
+
+export const threeUserExample = atom({
+  key: "threeUserExample",
+  default: [],
 });
 
 

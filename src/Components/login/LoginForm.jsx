@@ -18,6 +18,7 @@ import { Image } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultApiUrl, LoggedInUserData, LoggedInUserTokenJwt } from '../../Atom';
 import LoginSVG from './LoginSVG';
+import { openNotificationSuccess } from '../../assets/Alert/Alert';
 
 const LoginForm = () => {
   var navigate = useNavigate();
@@ -56,7 +57,8 @@ const LoginForm = () => {
             console.log(res.data);
 
             setLoggedUserToken(res.data);
-            
+            localStorage.setItem("LoginToken", JSON.stringify(res.data))
+
             action.resetForm();
             navigate("/Search");
           }
@@ -65,6 +67,11 @@ const LoginForm = () => {
         .catch((error) => {
           if (error.response.status === 400) {
             console.log("error log", error.response);
+            let type = "error";
+            let placement = "topRight"
+            let message = "Email or Password is Wrong"
+            let description = "Please! Something Went Wrong"
+            openNotificationSuccess(type, placement, message, description)
           }
         });
     },
@@ -119,7 +126,7 @@ const LoginForm = () => {
 
                     <div className='row my-2 justify-content-center '>
                       <div className='col-md-10'>
-                        <p>I don't have Account <Link to='/auth/Register' className='C-color'>Register</Link></p>
+                        <p><Link to='/auth/ForgetPassword' className='C-color'>Forgot Password</Link></p>
                       </div>
                     </div>
 
@@ -128,6 +135,13 @@ const LoginForm = () => {
                         <button type='submit' className='primary btn w-100 '>Login</button>
                       </div>
                     </div>
+
+                    <div className='row my-2 justify-content-center '>
+                      <div className='col-md-10'>
+                        <p>I don't have Account <Link to='/auth/Register' className='C-color'>Register</Link></p>
+                      </div>
+                    </div>
+
 
                   </form>
                 </div>

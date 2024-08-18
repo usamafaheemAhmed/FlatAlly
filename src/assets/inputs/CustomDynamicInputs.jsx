@@ -123,7 +123,7 @@ const FormikSmokingPreferences = ({ label, extra, option, ...props }) => {
     const hasError = meta.touched && meta.error;
 
     return (
-        <div className='col-md-12 mt-3'>
+        <div className='col-md-12'>
             {label && <label htmlFor={props.id || props.name}>{label}</label>}
             <div className={` ${extra.mainHead ? extra.mainHead : "preference-container"} `}>
                 <div
