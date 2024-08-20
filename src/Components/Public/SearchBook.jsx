@@ -15,7 +15,8 @@ import * as Yup from 'yup';
 import HatWomen from "../../assets/images/HatWomen.jpg"
 import { FormikSelect } from '../../assets/inputs/CustomDynamicInputs'
 import { GetAxios, openNotificationSuccess, PostAxios } from '../../assets/Alert/Alert'
-
+import moment from 'moment';
+import AntDrawer from '../AntDrawer/AntDrawer'
 
 const SearchBook = () => {
 
@@ -31,12 +32,10 @@ const SearchBook = () => {
     const { state } = location;
     let [whatUserWantToSearch, setWhatUserWantToSearch] = useRecoilState(WhatUserWantToSearch);
     let [loading, setLoading] = useState(false);
+    let [openDrawer, setOpenDrawer] = useState(false);
+    let [UserData, setUserData] = useState();
     let [matchedData, setMatchedData] = useState([]);
-    let [foundData, setFoundData] = useState([
-        {
-
-        }
-    ]);
+    let [foundData, setFoundData] = useState([{ user: {}, flat: {}, score: "unknown" }]);
 
 
     useEffect(() => {
@@ -92,10 +91,10 @@ const SearchBook = () => {
             }
         }
 
-        let res = await PostAxios(defaultApi + "/api/matchV2/findMatches",values, head);
+        let res = await PostAxios(defaultApi + "/api/matchV2/findMatches", values, head);
         if (res) {
-            console.log(res)
-            setFoundData(res)
+            console.log(JSON.stringify(res.matches))
+            setFoundData(res.matches)
             setLoading(false);
             notifySuccess("Data Found", "Click on those which are Online", "success")
         }
@@ -109,6 +108,59 @@ const SearchBook = () => {
         openNotificationSuccess(type, placement, message, description);
     };
     let validationSchema = Yup.object().shape({})
+
+    const getTimeDifference = (updatedAt) => {
+        const now = moment();
+        const updatedTime = moment(updatedAt);
+        const duration = moment.duration(now.diff(updatedTime));
+
+        const minutes = duration.asMinutes();
+        const hours = duration.asHours();
+        const days = duration.asDays();
+
+        if (minutes < 1) {
+            return 'Just now';
+        } else if (minutes < 60) {
+            return `Last updated ${Math.floor(minutes)} mins ago`;
+        } else if (hours < 24) {
+            return `Last updated ${Math.floor(hours)} hours ago`;
+        } else {
+            return `Last updated ${Math.floor(days)} days ago`;
+        }
+    };
+
+
+    const ImageHandle = (flats) => {
+        let data = [];
+        try {
+            if (!flats || !flats.imgs_Url || !Array.isArray(flats.imgs_Url)) {
+                throw new Error('Invalid input: `flats` or `flats.imgs_Url` is missing or not an array.');
+            }
+
+            data = flats.imgs_Url.map((elem, index) => {
+                if (typeof elem !== 'string') {
+                    throw new Error(`Invalid element at index ${index}: Expected a string but got ${typeof elem}.`);
+                }
+                return defaultApi + "/" + elem.replace("\\", '/');
+            });
+
+        } catch (error) {
+            console.error('Error in ImageHandle:', error.message);
+            // Optionally, you could return an empty array or handle the error in another way
+            data = [];
+        }
+
+        console.log(data);
+        return data;
+    };
+
+
+
+    let closeDrawer = (props) => {
+        console.log(props, "asdas")
+        setOpenDrawer(props);
+        return false;
+    }
 
 
     return (
@@ -386,132 +438,89 @@ const SearchBook = () => {
                                                 }
                                                 {!loading && foundData.length > 0 &&
                                                     <div className='col-md-12 px-3 pb-3 SearchCardBox'>
-                                                        <Badge.Ribbon text="Online">
-                                                            <div className="card mb-3">
-                                                                <div className="row no-gutters justify-content-stretch">
-                                                                    <div className="col-md-4 overflow-hidden">
-                                                                        <Image src={HatWomen} alt="what to do" fluid className='h-100 w-100 rounded-start' />
-                                                                    </div>
-                                                                    <div className="col-md-8">
-                                                                        <div className="card-body">
-                                                                            <h5 className="card-title"> 6 days Bangkok Phuket</h5>
-                                                                            <h5 className="card-title mt-1"> Relaxing Holiday</h5>
-                                                                            <div className="row">
-                                                                                <div className='col-4'>
-                                                                                    <p className='text-secondary p-0 m-0'> <IoLocationOutline /> Area Location</p>
+                                                        {foundData.map((elem, index) => {
+
+                                                            console.log(elem, "elem Data");
+                                                            let { user, flat, score } = elem;
+                                                            console.log(user, "User Data");
+                                                            console.log(flat, "flat Data");
+                                                            let UpdatedValue = getTimeDifference(flat.updatedAt);
+                                                            let ImageGot = ImageHandle(flat);
+
+                                                            if (user?.refreshToken) {
+                                                                return (
+                                                                    <Badge.Ribbon text="Online">
+                                                                        <div className="card mb-3" onClick={() => { setUserData(elem); setOpenDrawer(true) }}>
+                                                                            <div className="row no-gutters justify-content-stretch">
+                                                                                <div className="col-md-4 overflow-hidden" style={{ maxHeight: "13rem" }}>
+                                                                                    <Image src={ImageGot[0] || HatWomen} alt="what to do" fluid className='h-100 w-100 rounded-start' />
                                                                                 </div>
-                                                                                <div className='col-8'>
-                                                                                    <BadgeBootstrap className='float-end rounded-0 bg-Golden2 '>New</BadgeBootstrap>
+                                                                                <div className="col-md-8">
+                                                                                    <div className="card-body">
+                                                                                        <h5 className="card-title">{user.userName} owens an Flat</h5>
+                                                                                        <h5 className="card-title mt-1">Lives in {user.area_FK.areaName}</h5>
+                                                                                        <div className="row">
+                                                                                            <div className='col-4'>
+                                                                                                <p className='text-secondary p-0 m-0'> <IoLocationOutline /> Area Location</p>
+                                                                                            </div>
+                                                                                            <div className='col-8'>
+                                                                                                <div className='d-flex justify-content-end gap-3'>
+                                                                                                    <BadgeBootstrap className='rounded-0 bg-Golden2 '>New</BadgeBootstrap>
+                                                                                                    <BadgeBootstrap className='rounded-0 bg-Golden2 '> Match Score : {score}</BadgeBootstrap>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <p className="card-text">{user.address}</p>
+                                                                                        <p className="card-text"><small className="text-muted">{UpdatedValue}</small></p>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <p className="card-text">Address</p>
-                                                                            <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
+                                                                        </div>
+                                                                    </Badge.Ribbon>
+                                                                )
+                                                            }
+                                                            else {
+                                                                return (
+                                                                    <div className="card mb-3">
+                                                                        <div className="row no-gutters justify-content-stretch">
+                                                                            <div className="col-md-4 overflow-hidden">
+                                                                                <Image src={HatWomen} alt="what to do" fluid className='h-100 w-100 rounded-start' />
+                                                                            </div>
+                                                                            <div className="col-md-8">
+                                                                                <div className="card-body">
+                                                                                    <h5 className="card-title">  Owners Name is :{user.userName}</h5>
+                                                                                    <h5 className="card-title mt-1"> Relaxing Holiday</h5>
+                                                                                    <div className="row">
+                                                                                        <div className='col-4'>
+                                                                                            <p className='text-secondary p-0 m-0'> <IoLocationOutline /> Area Location</p>
+                                                                                        </div>
+                                                                                        <div className='col-8'>
+                                                                                            <BadgeBootstrap className='float-end rounded-0 bg-Golden2 '>New</BadgeBootstrap>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <p className="card-text">Address</p>
+                                                                                    <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        </Badge.Ribbon>
-                                                        <div className="card mb-3">
-                                                            <div className="row no-gutters justify-content-stretch">
-                                                                <div className="col-md-4 overflow-hidden">
-                                                                    <Image src={HatWomen} alt="what to do" fluid className='h-100 w-100 rounded-start' />
-                                                                </div>
-                                                                <div className="col-md-8">
-                                                                    <div className="card-body">
-                                                                        <h5 className="card-title"> 6 days Bangkok Phuket</h5>
-                                                                        <h5 className="card-title mt-1"> Relaxing Holiday</h5>
-                                                                        <div className="row">
-                                                                            <div className='col-4'>
-                                                                                <p className='text-secondary p-0 m-0'> <IoLocationOutline /> Area Location</p>
-                                                                            </div>
-                                                                            <div className='col-8'>
-                                                                                <BadgeBootstrap className='float-end rounded-0 bg-Golden2 '>New</BadgeBootstrap>
-                                                                            </div>
-                                                                        </div>
-                                                                        <p className="card-text">Address</p>
-                                                                        <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="card mb-3">
-                                                            <div className="row no-gutters justify-content-stretch">
-                                                                <div className="col-md-4 overflow-hidden">
-                                                                    <Image src={HatWomen} alt="what to do" fluid className='h-100 w-100 rounded-start' />
-                                                                </div>
-                                                                <div className="col-md-8">
-                                                                    <div className="card-body">
-                                                                        <h5 className="card-title"> 6 days Bangkok Phuket</h5>
-                                                                        <h5 className="card-title mt-1"> Relaxing Holiday</h5>
-                                                                        <div className="row">
-                                                                            <div className='col-4'>
-                                                                                <p className='text-secondary p-0 m-0'> <IoLocationOutline /> Area Location</p>
-                                                                            </div>
-                                                                            <div className='col-8'>
-                                                                                <BadgeBootstrap className='float-end rounded-0 bg-Golden2 '>New</BadgeBootstrap>
-                                                                            </div>
-                                                                        </div>
-                                                                        <p className="card-text">Address</p>
-                                                                        <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="card mb-3">
-                                                            <div className="row no-gutters justify-content-stretch">
-                                                                <div className="col-md-4 overflow-hidden">
-                                                                    <Image src={HatWomen} alt="what to do" fluid className='h-100 w-100 rounded-start' />
-                                                                </div>
-                                                                <div className="col-md-8">
-                                                                    <div className="card-body">
-                                                                        <h5 className="card-title"> 6 days Bangkok Phuket</h5>
-                                                                        <h5 className="card-title mt-1"> Relaxing Holiday</h5>
-                                                                        <div className="row">
-                                                                            <div className='col-4'>
-                                                                                <p className='text-secondary p-0 m-0'> <IoLocationOutline /> Area Location</p>
-                                                                            </div>
-                                                                            <div className='col-8'>
-                                                                                <BadgeBootstrap className='float-end rounded-0 bg-Golden2 '>New</BadgeBootstrap>
-                                                                            </div>
-                                                                        </div>
-                                                                        <p className="card-text">Address</p>
-                                                                        <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="card mb-3">
-                                                            <div className="row no-gutters justify-content-stretch">
-                                                                <div className="col-md-4 overflow-hidden">
-                                                                    <Image src={HatWomen} alt="what to do" fluid className='h-100 w-100 rounded-start' />
-                                                                </div>
-                                                                <div className="col-md-8">
-                                                                    <div className="card-body">
-                                                                        <h5 className="card-title"> 6 days Bangkok Phuket</h5>
-                                                                        <h5 className="card-title mt-1"> Relaxing Holiday</h5>
-                                                                        <div className="row">
-                                                                            <div className='col-4'>
-                                                                                <p className='text-secondary p-0 m-0'> <IoLocationOutline /> Area Location</p>
-                                                                            </div>
-                                                                            <div className='col-8'>
-                                                                                <BadgeBootstrap className='float-end rounded-0 bg-Golden2 '>New</BadgeBootstrap>
-                                                                            </div>
-                                                                        </div>
-                                                                        <p className="card-text">Address</p>
-                                                                        <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                                )
+                                                            }
+                                                        })}
                                                     </div>
                                                 }
+                                                {!loading && !(foundData.length <= 0) &&
+                                                    <Pagination align="center" defaultCurrent={1} total={50} />
+                                                }
 
-                                                <Pagination align="center" defaultCurrent={1} total={50} />
                                             </div>
 
                                         </div>
                                     </div>
                                 </div>
+
+                                <AntDrawer elem={UserData} openDrawer={openDrawer} backFun={closeDrawer} />
+
                             </Form>
                         );
                     }}
