@@ -10,6 +10,7 @@ import LoginForm from "../login/LoginForm";
 import Register from "../login/Register";
 import DashBoard from "../Public/DashBoard";
 import ForgetPassword from "../login/ForgetPassword";
+import GetReviews from "../Public/GetReviews";
 
 const PuRoutes = [
     {
@@ -68,6 +69,7 @@ const PuRoutes = [
         icon: <MdHome />,
         component: <ForgetPassword />,
     },
+
     // Add more routes here as needed
 ];
 

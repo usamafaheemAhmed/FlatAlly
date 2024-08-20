@@ -55,7 +55,7 @@ function TopNav() {
                             <Nav className="justify-content-start justify-content-md-between align-items-start align-items-md-center w-100 CustomPadding">
                                 <NavLink to="/" className="nav-link">Home</NavLink>
                                 {loggedUserToken?.accessToken && preferenceObj && (
-                                    <Nav.Link as={NavLink} to="/DashBoard/notification">Notification</Nav.Link>
+                                    <Nav.Link as={NavLink} to="/DashBoard/Preferences">Preference</Nav.Link>
                                 )}
                                 <NavLink to="/About" className="nav-link">About</NavLink>
                                 <NavLink to="/" className="nav-link d-none d-md-block">
@@ -71,7 +71,7 @@ function TopNav() {
                                         id={`offcanvasNavbarDropdown-expand-${expand}`}
                                     >
                                         <NavDropdown.Item as={NavLink} to="/DashBoard/Profile">DashBoard</NavDropdown.Item>
-                                        <NavDropdown.Item as={NavLink} to="/History">Notifications</NavDropdown.Item>
+                                        <NavDropdown.Item as={NavLink} to="/DashBoard/Flat">Flat</NavDropdown.Item>
                                         <NavDropdown.Item as="button"
                                             onClick={handleLogout}
                                             className="logout-button">logout</NavDropdown.Item>

@@ -29,6 +29,7 @@ function App() {
         <Route path="/*" element={<DefaultLayout><PublicRouters /></DefaultLayout>} />
         <Route path="/auth/*" element={<AuthLayout><PublicRouters /></AuthLayout>} />
         <Route path="/admin/*" element={<Admin><AdminRouters /></Admin>} />
+        <Route path="/User/*" element={<Admin><AdminRouters /></Admin>} />
       </Routes>
     </div>
   );

@@ -29,7 +29,7 @@ function ProfileMenu() {
             }
 
 
-            <Nav.Item>
+            <Nav.Item className="d-none">
                 <Nav.Link as={NavLink} to="/DashBoard/notification" className='textGolden textGoldenHover'>
                     Notification
                 </Nav.Link>

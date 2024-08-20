@@ -75,31 +75,48 @@ const SearchBook = () => {
 
 
     let onSubmit = async (values) => {
-        console.log(JSON.stringify(values))
-
+        console.log(JSON.stringify(values));
         setLoading(true);
 
         let head = "";
         let Token = localStorage.getItem("LoginToken");
 
-        if (JSON.parse(Token).accessToken) {
+        if (JSON.parse(Token)?.accessToken) {
             head = {
                 headers: {
                     'Authorization': `Bearer ${JSON.parse(Token).accessToken}`,
                     'Content-Type': 'application/json' // Optional, specify if you are sending JSON data
                 }
+            };
+        }
+
+        try {
+            let res = await PostAxios(defaultApi + "/api/matchV2/findMatches", values, head);
+            if (res) {
+                console.log(JSON.stringify(res.matches));
+                setFoundData(res.matches);
+                notifySuccess("Data Found", "Click on those which are Online", "success");
             }
-        }
+        } catch (error) {
+            console.error("Error during submission:", error);
+            if (error?.response?.status === 403 && error?.response?.data === "Forbidden") {
+                notifySuccess("Login Expired", "You need to login again to access this page", "error");
+                localStorage.clear();
 
-        let res = await PostAxios(defaultApi + "/api/matchV2/findMatches", values, head);
-        if (res) {
-            console.log(JSON.stringify(res.matches))
-            setFoundData(res.matches)
-            setLoading(false);
-            notifySuccess("Data Found", "Click on those which are Online", "success")
-        }
+                Nav("/auth/Login");
+            }
+            else {
 
-    }
+                // Show an error notification
+                notifySuccess("Error", "An error occurred while trying to find matches. Please try again.", "error");
+
+            }
+
+            setLoading(false); // Stop the loading indicator in case of an error
+        } finally {
+            setLoading(false); // Ensure loading is stopped regardless of success or failure
+        }
+    };
 
     // Helper function for showing notifications
     const notifySuccess = (message, description, type) => {

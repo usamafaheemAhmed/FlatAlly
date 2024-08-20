@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { CiCircleInfo } from 'react-icons/ci';
 import { PostAxios } from '../../assets/Alert/Alert';
 import { Image } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const AntDrawer = (props) => {
     let defaultApi = useRecoilValue(defaultApiUrl);
@@ -30,6 +31,8 @@ const AntDrawer = (props) => {
         }
     };
 
+    let Nav = useNavigate();
+
     const clickForCall = async () => {
         try {
             let obj = {
@@ -54,6 +57,10 @@ const AntDrawer = (props) => {
             if (res?.message === "Meeting scheduled and emails sent") {
                 // Open the meeting URL in a new window
                 window.open(res.apiResponse.join_url, '_blank');
+
+                Nav("/User/UserReview");
+
+
             }
 
 
